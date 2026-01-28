@@ -29,19 +29,19 @@ Each user story represents a complete, independently testable increment. Complet
 
 **Independent Test**: Developer can run the frontend application locally and see the initial UI.
 
-- [ ] T001 Initialize Next.js project in frontend/ directory with TypeScript support
-- [ ] T002 Configure environment variables for backend API endpoints (NEXT_PUBLIC_API_BASE_URL)
-- [ ] T003 Set up ESLint and Prettier with appropriate configuration for Next.js
-- [ ] T004 Install and configure necessary dependencies (axios for API calls, react-hook-form for forms, etc.)
-- [ ] T005 Create Vercel-compatible project structure (app/ directory structure with layout.tsx, page.tsx)
-- [ ] T006 Set up basic layout and styling configuration (Tailwind CSS or preferred framework)
-- [ ] T007 Create component directory structure (components/ui/, components/forms/, components/layouts/)
-- [ ] T008 Set up component export structure (index.tsx files for easy imports)
-- [ ] T009 Configure component styling approach (CSS modules, Tailwind classes, etc.)
-- [ ] T010 Create base component wrapper with proper TypeScript interfaces
-- [ ] T011 Configure next.config.js for Vercel deployment settings
-- [ ] T012 Set up vercel.json configuration file for custom routing and headers
-- [ ] T013 Configure API routes directory (app/api/) for potential edge functions
+- [x] T001 Initialize Next.js project in frontend/ directory with TypeScript support
+- [x] T002 Configure environment variables for backend API endpoints (NEXT_PUBLIC_API_BASE_URL)
+- [x] T003 Set up ESLint and Prettier with appropriate configuration for Next.js
+- [x] T004 Install and configure necessary dependencies (axios for API calls, react-hook-form for forms, etc.)
+- [x] T005 Create Vercel-compatible project structure (app/ directory structure with layout.tsx, page.tsx)
+- [x] T006 Set up basic layout and styling configuration (Tailwind CSS or preferred framework)
+- [x] T007 Create component directory structure (components/ui/, components/forms/, components/layouts/)
+- [x] T008 Set up component export structure (index.tsx files for easy imports)
+- [x] T009 Configure component styling approach (CSS modules, Tailwind classes, etc.)
+- [x] T010 Create base component wrapper with proper TypeScript interfaces
+- [x] T011 Configure next.config.js for Vercel deployment settings
+- [x] T012 Set up vercel.json configuration file for custom routing and headers
+- [x] T013 Configure API routes directory (app/api/) for potential edge functions
 
 ---
 
@@ -53,30 +53,30 @@ Each user story represents a complete, independently testable increment. Complet
 
 **Phase 3 tasks MUST NOT begin until Phase 2 authentication infrastructure is complete.**
 
-- [ ] T014 Create API service module to handle authenticated requests to backend contracts
-- [ ] T015 Implement JWT token storage and retrieval in browser localStorage/sessionStorage
-- [ ] T016 Create authentication context/hook for managing user session state
-- [ ] T017 Build reusable UI components (Button, Input, Card, Modal, LoadingSpinner)
-- [ ] T018 Implement error handling and notification system for API responses
-- [ ] T019 Create form validation utilities using Zod or similar schema validation
-- [ ] T020 Set up authentication guard components for protected routes
-- [ ] T021 [P] Create utility functions for date formatting and common operations
-- [ ] T022 Create Button component with variants (primary, secondary, danger) per design system
-- [ ] T023 Create Input component with validation states matching openapi.yaml schemas
-- [ ] T024 Create Card component for grouping related content
-- [ ] T025 Create Modal component for overlays and dialogs
-- [ ] T026 Create LoadingSpinner component for API loading states
-- [ ] T027 Create ErrorMessage component for displaying API error responses from openapi.yaml
-- [ ] T028 Create Header component with navigation elements
-- [ ] T029 Create Footer component with common footer content
-- [ ] T030 Create Layout component with consistent page structure
-- [ ] T031 [P] Create Typography components (Heading, Text, Link) with consistent styling
-- [ ] T032 Create ApiClient component wrapping axios/fetch with JWT token management
-- [ ] T033 Create AuthService component with methods for auth endpoints in openapi.yaml
-- [ ] T034 Create UserService component with methods for user endpoints in openapi.yaml
-- [ ] T035 Create ApiResponseHandler component for processing responses per openapi.yaml
-- [ ] T036 [P] Create DataLoader component for handling loading states during API calls
-- [ ] T037 [P] Create ErrorBoundary component for handling API errors from openapi.yaml
+- [x] T014 Create API service module to handle authenticated requests to backend contracts
+- [x] T015 Implement JWT token storage and retrieval in browser localStorage/sessionStorage
+- [x] T016 Create authentication context/hook for managing user session state
+- [x] T017 Build reusable UI components (Button, Input, Card, Modal, LoadingSpinner)
+- [x] T018 Implement error handling and notification system for API responses
+- [x] T019 Create form validation utilities using Zod or similar schema validation
+- [x] T020 Set up authentication guard components for protected routes
+- [x] T021 [P] Create utility functions for date formatting and common operations
+- [x] T022 Create Button component with variants (primary, secondary, danger) per design system
+- [x] T023 Create Input component with validation states matching openapi.yaml schemas
+- [x] T024 Create Card component for grouping related content
+- [x] T025 Create Modal component for overlays and dialogs
+- [x] T026 Create LoadingSpinner component for API loading states
+- [x] T027 Create ErrorMessage component for displaying API error responses from openapi.yaml
+- [x] T028 Create Header component with navigation elements
+- [x] T029 Create Footer component with common footer content
+- [x] T030 Create Layout component with consistent page structure
+- [x] T031 [P] Create Typography components (Heading, Text, Link) with consistent styling
+- [x] T032 Create ApiClient component wrapping axios/fetch with JWT token management
+- [x] T033 Create AuthService component with methods for auth endpoints in openapi.yaml
+- [x] T034 Create UserService component with methods for user endpoints in openapi.yaml
+- [x] T035 Create ApiResponseHandler component for processing responses per openapi.yaml
+- [x] T036 [P] Create DataLoader component for handling loading states during API calls
+- [x] T037 [P] Create ErrorBoundary component for handling API errors from openapi.yaml
 
 ---
 
@@ -86,22 +86,22 @@ Each user story represents a complete, independently testable increment. Complet
 
 **Independent Test**: Users can create an account, log in, create tasks, mark them as complete/incomplete, and delete them - all data remains isolated to their account.
 
-**All {userId} values used in API paths MUST be derived from authenticated user context returned by GET /users/me.**
+**All {userId} values used in API paths MUST be derived from authenticated user context returned by GET /users.me.**
 
-- [ ] T038 Create FormField component with proper label, input, and error message integration
-- [ ] T039 [P] Create FormValidation component with schema validation matching openapi.yaml
-- [ ] T040 Create LoginForm component mapping to POST /auth/login from openapi.yaml
-- [ ] T041 Create RegisterForm component mapping to POST /auth/register from openapi.yaml
-- [ ] T042 Create TaskForm component mapping to POST/PUT /users/{userId}/tasks from openapi.yaml
-- [ ] T043 Create TaskFilter component for filtering task lists
-- [ ] T044 Create TaskListPage component that fetches data from GET /users/{userId}/tasks
-- [ ] T045 Create TaskItem component displaying task data from GET /users/{userId}/tasks response
-- [ ] T046 Create TaskItemActions component with buttons for edit/delete/completion
-- [ ] T047 Create TaskCompletionToggle component calling PATCH /users/{userId}/tasks/{taskId}/complete
-- [ ] T048 Create TaskCreationSection component containing TaskForm
-- [ ] T049 Create TaskDetailModal component for viewing/editing single tasks
-- [ ] T050 Create TaskStats component showing completion metrics
-- [ ] T051 Create ProtectedRoute component ensuring authentication before rendering task pages
+- [x] T038 Create FormField component with proper label, input, and error message integration
+- [x] T039 [P] Create FormValidation component with schema validation matching openapi.yaml
+- [x] T040 Create LoginForm component mapping to POST /auth/login from openapi.yaml
+- [x] T041 Create RegisterForm component mapping to POST /auth/register from openapi.yaml
+- [x] T042 Create TaskForm component mapping to POST/PUT /users/{userId}/tasks from openapi.yaml
+- [x] T043 Create TaskFilter component for filtering task lists
+- [x] T044 Create TaskListPage component that fetches data from GET /users/{userId}/tasks
+- [x] T045 Create TaskItem component displaying task data from GET /users/{userId}/tasks response
+- [x] T046 Create TaskItemActions component with buttons for edit/delete/completion
+- [x] T047 Create TaskCompletionToggle component calling PATCH /users/{userId}/tasks/{taskId}/complete
+- [x] T048 Create TaskCreationSection component containing TaskForm
+- [x] T049 Create TaskDetailModal component for viewing/editing single tasks
+- [x] T050 Create TaskStats component showing completion metrics
+- [x] T051 Create ProtectedRoute component ensuring authentication before rendering task pages
 
 ---
 
@@ -113,13 +113,13 @@ Each user story represents a complete, independently testable increment. Complet
 
 **This phase extends previously implemented authentication infrastructure; it does not reimplement it.**
 
-- [ ] T052 Create LoginPage component with LoginForm integration
-- [ ] T053 Create RegisterPage component with RegisterForm integration
-- [ ] T054 Create LogoutButton component that calls authentication cleanup
-- [ ] T055 Create UserProfile component displaying data from GET /users/me
-- [ ] T056 Create AuthProvider component managing JWT token state
-- [ ] T057 Create WithAuth HOC or hook for protecting components requiring authentication
-- [ ] T058 Create SessionTimeout component handling JWT expiration
+- [x] T052 Create LoginPage component with LoginForm integration
+- [x] T053 Create RegisterPage component with RegisterForm integration
+- [x] T054 Create LogoutButton component that calls authentication cleanup
+- [x] T055 Create UserProfile component displaying data from GET /users.me
+- [x] T056 Create AuthProvider component managing JWT token state
+- [x] T057 Create WithAuth HOC or hook for protecting components requiring authentication
+- [x] T058 Create SessionTimeout component handling JWT expiration
 
 ---
 
