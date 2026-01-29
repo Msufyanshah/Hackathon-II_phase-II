@@ -81,7 +81,7 @@ Each user story represents a complete, independently testable increment. Complet
 - [x] T024 Create Card component for grouping related content
 - [x] T025 Create Modal component for overlays and dialogs
 - [x] T026 Create LoadingSpinner component for API loading states
-- [x] T027 Create ErrorMessage component for displaying API error responses from openapi.yaml
+- [ ] T027 Create ErrorMessage component for displaying API error responses from openapi.yaml - Must explicitly handle HTTP error codes: 400, 401, 403, 404, 409 as defined in openapi.yaml
 - [x] T028 Create Header component with navigation elements
 - [x] T029 Create Footer component with common footer content
 - [x] T030 Create Layout component with consistent page structure
@@ -91,7 +91,7 @@ Each user story represents a complete, independently testable increment. Complet
 - [x] T034 Create UserService component with methods for user endpoints in openapi.yaml
 - [x] T035 Create ApiResponseHandler component for processing responses per openapi.yaml
 - [x] T036 [P] Create DataLoader component for handling loading states during API calls
-- [x] T037 [P] Create ErrorBoundary component for handling API errors from openapi.yaml
+- [ ] T037 [P] Create ErrorBoundary component for handling API errors from openapi.yaml - Must explicitly handle HTTP error codes: 400, 401, 403, 404, 409 as defined in openapi.yaml
 
 ---
 
@@ -104,17 +104,17 @@ Each user story represents a complete, independently testable increment. Complet
 **All {userId} values used in API paths MUST be derived from authenticated user context returned by GET /users.me.**
 
 - [x] T038 Create FormField component with proper label, input, and error message integration
-- [x] T039 [P] Create FormValidation component with schema validation matching openapi.yaml
-- [x] T040 Create LoginForm component mapping to POST /auth/login from openapi.yaml
-- [x] T041 Create RegisterForm component mapping to POST /auth/register from openapi.yaml
-- [x] T042 Create TaskForm component mapping to POST/PUT /users/{userId}/tasks from openapi.yaml
-- [x] T043 Create TaskFilter component for filtering task lists
+- [ ] T039 [P] Create FormValidation component with schema validation matching openapi.yaml - Validation MUST strictly conform to the corresponding schema in openapi.yaml
+- [ ] T040 Create LoginForm component mapping to POST /auth/login from openapi.yaml - Validation MUST strictly conform to the corresponding schema in openapi.yaml
+- [ ] T041 Create RegisterForm component mapping to POST /auth/register from openapi.yaml - Validation MUST strictly conform to the corresponding schema in openapi.yaml
+- [ ] T042 Create TaskForm component mapping to POST/PUT /users/{userId}/tasks from openapi.yaml - Validation MUST strictly conform to the corresponding schema in openapi.yaml
+- [ ] T043 Create TaskFilter component performing client-side filtering only using data from GET /users/{userId}/tasks with no filtering parameters assumed unless defined in openapi.yaml
 - [x] T044 Create TaskListPage component that fetches data from GET /users/{userId}/tasks
 - [x] T045 Create TaskItem component displaying task data from GET /users/{userId}/tasks response
 - [x] T046 Create TaskItemActions component with buttons for edit/delete/completion
-- [x] T047 Create TaskCompletionToggle component calling PATCH /users/{userId}/tasks/{taskId}/complete
+- [ ] T047 Create TaskCompletionToggle component calling PATCH /users/{userId}/tasks/{taskId} to toggle completion state via request body as defined in openapi.yaml
 - [x] T048 Create TaskCreationSection component containing TaskForm
-- [x] T049 Create TaskDetailModal component for viewing/editing single tasks
+- [ ] T049 Create TaskDetailModal component fetching task via GET /users/{userId}/tasks/{taskId} and displaying task details per Task schema in openapi.yaml
 - [x] T050 Create TaskStats component showing completion metrics
 - [x] T051 Create ProtectedRoute component ensuring authentication before rendering task pages
 
@@ -168,7 +168,7 @@ Only after this gate is complete may Phase 5 tasks begin.
 - [ ] T065 Conduct full contract compliance audit - verify all API calls match openapi.yaml exactly
 - [ ] T066 Implement proper request/response validation matching openapi.yaml schemas
 - [ ] T067 Create type definitions matching the schemas defined in openapi.yaml
-- [ ] T068 Add comprehensive error handling for all response codes defined in openapi.yaml
+- [ ] T068 Add comprehensive error handling for all response codes defined in openapi.yaml - Must explicitly handle HTTP error codes: 400, 401, 403, 404, 409 as defined in openapi.yaml
 - [ ] T069 Implement proper loading states for all API interactions
 - [ ] T070 Create responsive design that works across desktop and mobile devices
 - [ ] T071 Add accessibility features (ARIA attributes, keyboard navigation)
