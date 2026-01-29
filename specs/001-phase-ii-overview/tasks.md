@@ -1,5 +1,20 @@
 # Frontend Implementation Tasks: Phase II Overview - Spec-Driven Todo Application
 
+## Task Execution Contract
+
+Tasks in this document follow a three-state lifecycle:
+
+1. Defined – task is written but not approved for execution
+2. Frozen – task is approved for implementation
+3. Completed – task is implemented and validated
+
+Tasks marked as [x] indicate implementation exists,
+but are NOT considered final until post-implementation
+validation is completed.
+
+No backend, database, or authentication tasks may begin
+until all frontend phases are validated and frozen.
+
 **Feature**: Phase II Overview - Spec-Driven Todo Application
 **Branch**: `001-phase-ii-overview`
 **Generated**: 2026-01-28
@@ -123,6 +138,19 @@ Each user story represents a complete, independently testable increment. Complet
 
 ---
 
+## 🔒 Frontend Validation Gate (Required)
+
+Before proceeding to Phase 5:
+
+- [ ] Validate all Phase 1–4 tasks against openapi.yaml
+- [ ] Remove any frontend behavior not explicitly allowed by contracts
+- [ ] Confirm authentication flow matches contract semantics
+- [ ] Freeze frontend task set (no new frontend tasks allowed)
+
+Only after this gate is complete may Phase 5 tasks begin.
+
+---
+
 ## Phase 5: Page Components & Contract Compliance (Priority: P2)
 
 **Goal**: A responsive web interface consumes backend contracts exactly as defined without introducing unauthorized behavior.
@@ -173,6 +201,12 @@ Each user story represents a complete, independently testable increment. Complet
 - [ ] T089 Optimize images and assets for Vercel Image Optimization API
 - [ ] T090 Configure security headers and CSP policies for Vercel deployment
 - [ ] T091 Set up preview deployments and branch deployment settings for Vercel
+
+---
+
+⚠️ Phase 7 contains component-level tasks derived from earlier phases.
+These tasks exist to ensure traceability and completeness.
+They do NOT represent new scope.
 
 ---
 
