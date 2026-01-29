@@ -1,42 +1,77 @@
 import { z } from 'zod';
 import { UserRegistrationRequest, UserLoginRequest, CreateTaskRequest, UpdateTaskRequest } from '../../lib/types';
 
-// User Registration Schema - Validation MUST strictly conform to the corresponding schema in openapi.yaml
+// User Registration Schema with validation matching openapi.yaml
 export const UserRegistrationSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters long'),
-  username: z.string()
-    .min(3, 'Username must be at least 3 characters long')
-    .max(50, 'Username must be less than 50 characters')
+  email: z
+    .string({ required_error: 'Email is required' })
+    .email('Please enter a valid email address')
+    .min(5, 'Email must be at least 5 characters')
+    .max(255, 'Email must not exceed 255 characters'),
+
+  password: z
+    .string({ required_error: 'Password is required' })
+    .min(8, 'Password must be at least 8 characters long')
+    .max(128, 'Password must not exceed 128 characters'),
+
+  username: z
+    .string({ required_error: 'Username is required' })
+    .min(3, 'Username must be at least 3 characters')
+    .max(50, 'Username must not exceed 50 characters')
     .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, underscores, and hyphens'),
 });
 
-// User Login Schema - Validation MUST strictly conform to the corresponding schema in openapi.yaml
+// User Login Schema with validation matching openapi.yaml
 export const UserLoginSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
+  email: z
+    .string({ required_error: 'Email is required' })
+    .email('Please enter a valid email address')
+    .min(5, 'Email must be at least 5 characters')
+    .max(255, 'Email must not exceed 255 characters'),
+
+  password: z
+    .string({ required_error: 'Password is required' })
+    .min(1, 'Password is required')
+    .max(128, 'Password must not exceed 128 characters'),
 });
 
-// Task Creation Schema - Validation MUST strictly conform to the corresponding schema in openapi.yaml
+// Task Creation Schema with validation matching openapi.yaml
 export const CreateTaskSchema = z.object({
-  title: z.string()
+  title: z
+    .string({ required_error: 'Task title is required' })
     .min(1, 'Title is required')
-    .max(255, 'Title must be less than 255 characters'),
-  description: z.string().max(1000, 'Description must be less than 1000 characters').optional(),
-  completed: z.boolean().optional(),
-});
+    .max(255, 'Title must not exceed 255 characters'),
 
-// Task Update Schema - Validation MUST strictly conform to the corresponding schema in openapi.yaml
-export const UpdateTaskSchema = z.object({
-  title: z.string()
-    .min(1, 'Title must be at least 1 character')
-    .max(255, 'Title must be less than 255 characters')
+  description: z
+    .string()
+    .max(1000, 'Description must not exceed 1000 characters')
     .optional(),
-  description: z.string().max(1000, 'Description must be less than 1000 characters').optional(),
-  completed: z.boolean().optional(),
+
+  completed: z
+    .boolean()
+    .optional()
+    .default(false),
 });
 
-// Validation utility functions
+// Task Update Schema with validation matching openapi.yaml
+export const UpdateTaskSchema = z.object({
+  title: z
+    .string()
+    .min(1, 'Title must be at least 1 character')
+    .max(255, 'Title must not exceed 255 characters')
+    .optional(),
+
+  description: z
+    .string()
+    .max(1000, 'Description must not exceed 1000 characters')
+    .optional(),
+
+  completed: z
+    .boolean()
+    .optional(),
+});
+
+// Validation utility functions that implement schema validation matching openapi.yaml
 export const validateUserRegistration = (data: UserRegistrationRequest) => {
   return UserRegistrationSchema.safeParse(data);
 };
@@ -53,16 +88,38 @@ export const validateUpdateTask = (data: UpdateTaskRequest) => {
   return UpdateTaskSchema.safeParse(data);
 };
 
-// Generic validation handler
-export const validateFormData = <T>(schema: z.ZodSchema<T>, data: any): { success: boolean; data?: T; error?: string } => {
+// Generic validation handler with detailed error messages
+export const validateFormData = <T>(schema: z.ZodSchema<T>, data: any) => {
   const result = schema.safeParse(data);
 
   if (result.success) {
     return { success: true, data: result.data };
   } else {
-    const errors = result.error.errors.map(e => e.message).join(', ');
-    return { success: false, error: errors };
+    // Format errors to be more user-friendly
+    const errors = result.error.errors.reduce((acc, curr) => {
+      acc[curr.path.join('.')] = curr.message;
+      return acc;
+    }, {} as Record<string, string>);
+
+    return {
+      success: false,
+      errors,
+      error: result.error
+    };
   }
+};
+
+// Validation helper for forms with error formatting
+export const getFormattedErrors = (error: z.ZodError) => {
+  return error.errors.reduce((acc, curr) => {
+    acc[curr.path.join('.')] = curr.message;
+    return acc;
+  }, {} as Record<string, string>);
+};
+
+// Validation function that returns a flat array of error messages
+export const getErrorMessages = (error: z.ZodError) => {
+  return error.errors.map(e => e.message);
 };
 
 export default {
@@ -75,4 +132,6 @@ export default {
   validateCreateTask,
   validateUpdateTask,
   validateFormData,
+  getFormattedErrors,
+  getErrorMessages,
 };

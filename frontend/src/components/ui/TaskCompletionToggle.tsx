@@ -27,8 +27,8 @@ const TaskCompletionToggle: React.FC<TaskCompletionToggleProps> = ({
     setError(null);
 
     try {
-      // Toggle completion state via request body as defined in openapi.yaml
-      const updatedTask = await TaskService.toggleTaskCompletion(task.id, !task.completed);
+      // Calling PATCH /users/{userId}/tasks/{taskId} to toggle completion state via request body as defined in openapi.yaml
+      const updatedTask = await TaskService.toggleTaskCompletion(userId, task.id, !task.completed);
 
       // Call the onToggle callback with the updated task
       if (onToggle) {

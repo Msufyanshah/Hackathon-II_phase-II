@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Task } from '../../lib/types';
+import { BaseComponentProps, Task } from '../../lib/types';
 import { TaskService } from '../../services/tasks';
 import Modal from './Modal';
 import TaskForm from '../forms/TaskForm';
