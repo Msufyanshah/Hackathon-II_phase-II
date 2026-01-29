@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { UserRegistrationRequest, UserLoginRequest, CreateTaskRequest, UpdateTaskRequest } from '../../lib/types';
 
-// User Registration Schema
-export const userRegistrationSchema = z.object({
+// User Registration Schema - Validation MUST strictly conform to the corresponding schema in openapi.yaml
+export const UserRegistrationSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters long'),
   username: z.string()
@@ -11,14 +11,14 @@ export const userRegistrationSchema = z.object({
     .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, underscores, and hyphens'),
 });
 
-// User Login Schema
-export const userLoginSchema = z.object({
+// User Login Schema - Validation MUST strictly conform to the corresponding schema in openapi.yaml
+export const UserLoginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(1, 'Password is required'),
 });
 
-// Task Creation Schema
-export const createTaskSchema = z.object({
+// Task Creation Schema - Validation MUST strictly conform to the corresponding schema in openapi.yaml
+export const CreateTaskSchema = z.object({
   title: z.string()
     .min(1, 'Title is required')
     .max(255, 'Title must be less than 255 characters'),
@@ -26,8 +26,8 @@ export const createTaskSchema = z.object({
   completed: z.boolean().optional(),
 });
 
-// Task Update Schema
-export const updateTaskSchema = z.object({
+// Task Update Schema - Validation MUST strictly conform to the corresponding schema in openapi.yaml
+export const UpdateTaskSchema = z.object({
   title: z.string()
     .min(1, 'Title must be at least 1 character')
     .max(255, 'Title must be less than 255 characters')
@@ -38,19 +38,19 @@ export const updateTaskSchema = z.object({
 
 // Validation utility functions
 export const validateUserRegistration = (data: UserRegistrationRequest) => {
-  return userRegistrationSchema.safeParse(data);
+  return UserRegistrationSchema.safeParse(data);
 };
 
 export const validateUserLogin = (data: UserLoginRequest) => {
-  return userLoginSchema.safeParse(data);
+  return UserLoginSchema.safeParse(data);
 };
 
 export const validateCreateTask = (data: CreateTaskRequest) => {
-  return createTaskSchema.safeParse(data);
+  return CreateTaskSchema.safeParse(data);
 };
 
 export const validateUpdateTask = (data: UpdateTaskRequest) => {
-  return updateTaskSchema.safeParse(data);
+  return UpdateTaskSchema.safeParse(data);
 };
 
 // Generic validation handler
@@ -66,10 +66,10 @@ export const validateFormData = <T>(schema: z.ZodSchema<T>, data: any): { succes
 };
 
 export default {
-  userRegistrationSchema,
-  userLoginSchema,
-  createTaskSchema,
-  updateTaskSchema,
+  UserRegistrationSchema,
+  UserLoginSchema,
+  CreateTaskSchema,
+  UpdateTaskSchema,
   validateUserRegistration,
   validateUserLogin,
   validateCreateTask,

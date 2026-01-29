@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BaseComponentProps, CreateTaskRequest, UpdateTaskRequest, Task } from '../../lib/types';
 import FormField from './FormField';
 import Button from '../ui/Button';
-import { validateCreateTask, validateUpdateTask } from './FormValidation';
+import { CreateTaskSchema, UpdateTaskSchema } from './FormValidation';
 import apiClient from '../../lib/ApiClient';
 
 export interface TaskFormProps extends BaseComponentProps {
@@ -41,12 +41,14 @@ const TaskForm: React.FC<TaskFormProps> = ({
       completed: completed || undefined
     };
 
-    // Validate form data based on whether it's create or update
+    // Validate form data using schema from openapi.yaml - Validation MUST strictly conform to the corresponding schema in openapi.yaml
     let validationResult;
     if (isEditing) {
-      validationResult = validateUpdateTask(formData as UpdateTaskRequest);
+      // Validate update form data using schema from openapi.yaml - Validation MUST strictly conform to the corresponding schema in openapi.yaml
+      validationResult = UpdateTaskSchema.safeParse(formData as UpdateTaskRequest);
     } else {
-      validationResult = validateCreateTask(formData as CreateTaskRequest);
+      // Validate create form data using schema from openapi.yaml - Validation MUST strictly conform to the corresponding schema in openapi.yaml
+      validationResult = CreateTaskSchema.safeParse(formData as CreateTaskRequest);
     }
 
     if (!validationResult.success) {

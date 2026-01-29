@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BaseComponentProps, UserRegistrationRequest } from '../../lib/types';
 import FormField from './FormField';
 import Button from '../ui/Button';
-import { validateUserRegistration } from './FormValidation';
+import { UserRegistrationSchema } from './FormValidation';
 import { useAuth } from '../../contexts/AuthContext';
 
 // Mock router since we're not in a Next.js component yet
@@ -46,8 +46,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
     // Prepare form data
     const formData: UserRegistrationRequest = { email, password, username };
 
-    // Validate form data
-    const validationResult = validateUserRegistration(formData);
+    // Validate form data using schema from openapi.yaml - Validation MUST strictly conform to the corresponding schema in openapi.yaml
+    const validationResult = UserRegistrationSchema.safeParse(formData);
 
     if (!validationResult.success) {
       // Convert Zod errors to our format

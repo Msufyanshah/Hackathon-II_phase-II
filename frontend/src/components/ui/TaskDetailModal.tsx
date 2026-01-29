@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { BaseComponentProps, Task } from '../../lib/types';
+import React, { useEffect, useState } from 'react';
+import { Task } from '../../lib/types';
+import { TaskService } from '../../services/tasks';
 import Modal from './Modal';
 import TaskForm from '../forms/TaskForm';
 import Button from './Button';
 import { Text, Heading } from './Typography';
-import apiClient from '../../lib/ApiClient';
+import ErrorMessage from './ErrorMessage';
 
-export interface TaskDetailModalProps extends BaseComponentProps {
-  task: Task;
+interface TaskDetailModalProps extends BaseComponentProps {
+  taskId: string;
   userId: string;
   isOpen: boolean;
   onClose: () => void;
@@ -16,15 +17,49 @@ export interface TaskDetailModalProps extends BaseComponentProps {
 }
 
 const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
-  task,
+  taskId,
   userId,
   isOpen,
   onClose,
   onTaskUpdate,
   onTaskDelete,
 }) => {
+  const [task, setTask] = useState<Task | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && taskId) {
+      loadTaskDetails();
+    }
+  }, [isOpen, taskId]);
+
+  const loadTaskDetails = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Fetch task via GET /users/{userId}/tasks/{taskId} - displaying task details per Task schema in openapi.yaml
+      const fetchedTask = await TaskService.getTaskById(taskId);
+      setTask(fetchedTask);
+    } catch (err: any) {
+      console.error('Error fetching task details:', err);
+
+      // Handle API errors
+      let errorMessage = 'Failed to load task details.';
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleTaskUpdate = (updatedTask: Task) => {
     onTaskUpdate(updatedTask);
@@ -32,8 +67,10 @@ const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
   };
 
   const handleTaskDelete = async () => {
+    if (!task) return;
+
     try {
-      await apiClient.deleteTask(userId, task.id);
+      await TaskService.deleteTask(task.id);
       onTaskDelete(task.id);
       onClose();
     } catch (error) {
@@ -41,20 +78,38 @@ const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
     }
   };
 
+  if (!isOpen) return null;
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       size="lg"
     >
-      {isEditing ? (
+      {isEditing && task ? (
         <TaskForm
           task={task}
           userId={userId}
           onSuccess={handleTaskUpdate}
           onCancel={() => setIsEditing(false)}
         />
-      ) : (
+      ) : loading ? (
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        </div>
+      ) : error ? (
+        <div className="p-6">
+          <ErrorMessage message={error} />
+          <div className="flex justify-end pt-4">
+            <Button
+              variant="secondary"
+              onClick={onClose}
+            >
+              Close
+            </Button>
+          </div>
+        </div>
+      ) : task ? (
         <div className="space-y-4">
           <div className="flex justify-between items-start">
             <Heading level={2} className="text-xl font-bold">
@@ -138,6 +193,18 @@ const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
               </div>
             </div>
           </Modal>
+        </div>
+      ) : (
+        <div className="p-6">
+          <p className="text-gray-500">Task not found</p>
+          <div className="flex justify-end pt-4">
+            <Button
+              variant="secondary"
+              onClick={onClose}
+            >
+              Close
+            </Button>
+          </div>
         </div>
       )}
     </Modal>
