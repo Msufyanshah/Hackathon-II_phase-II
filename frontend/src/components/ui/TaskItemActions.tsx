@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { BaseComponentProps, Task } from '../../lib/types';
-import Button from './Button';
-import Modal from './Modal';
+import { Button, Modal } from '.';
 import TaskForm from '../forms/TaskForm';
 
 export interface TaskItemActionsProps extends BaseComponentProps {

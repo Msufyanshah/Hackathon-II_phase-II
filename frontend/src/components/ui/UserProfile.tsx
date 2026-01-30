@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BaseComponentProps, User } from '../../lib/types';
-import Card from './Card';
+import { Card, DataLoader } from '.';
 import { Heading, Text } from './Typography';
-import DataLoader from './DataLoader';
 import { useAuth } from '../../contexts/AuthContext';
 import apiClient from '../../lib/ApiClient';
 

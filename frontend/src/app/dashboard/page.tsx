@@ -4,11 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { TaskService } from '../../services/tasks';
 import { Task } from '../../lib/types';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { TaskList } from '../../components/ui/TaskList';
-import { TaskStats } from '../../components/ui/TaskStats';
-import { TaskCreationSection } from '../../components/ui/TaskCreationSection';
+import { Card, Button, TaskCreationSection, TaskList, TaskStats } from '../../components/ui';
 import ProtectedRoute from '../../components/ui/ProtectedRoute';
 
 const DashboardPage: React.FC = () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BaseComponentProps, Task } from '../../lib/types';
-import Card from './Card';
+import { Card } from '.';
 import { Heading, Text } from './Typography';
 
 export interface TaskStatsProps extends BaseComponentProps {

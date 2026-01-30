@@ -1,7 +1,7 @@
 import React from 'react';
 import { BaseComponentProps } from '../../lib/types';
 import { useAuth } from '../../contexts/AuthContext';
-import Button from './Button';
+import { Button } from '.';
 
 export interface HeaderProps extends BaseComponentProps {
   title?: string;

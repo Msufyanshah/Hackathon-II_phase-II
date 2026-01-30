@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Task } from '../../lib/types';
 import { TaskService } from '../../services/tasks';
-import Button from './Button';
-import ErrorMessage from './ErrorMessage';
+import { Button, ErrorMessage } from '.';
 import { BaseComponentProps } from '../../lib/types';
 
 interface TaskCompletionToggleProps extends BaseComponentProps {

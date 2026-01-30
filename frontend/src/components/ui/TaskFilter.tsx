@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Task } from '../../lib/types';
 import { BaseComponentProps } from '../../lib/types';
-import { Input } from './Input';
-import { Button } from './Button';
+import { Input, Button } from '.';
 
 interface TaskFilterProps extends BaseComponentProps {
   tasks: Task[];

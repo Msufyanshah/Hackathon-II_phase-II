@@ -1,7 +1,6 @@
 import React from 'react';
 import { BaseComponentProps } from '../../lib/types';
-import { Button } from './Button';
-import { Card } from './Card';
+import { Button, Card } from '.';
 
 interface ErrorBoundaryState {
   hasError: boolean;

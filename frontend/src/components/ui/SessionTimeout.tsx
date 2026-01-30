@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BaseComponentProps } from '../../lib/types';
-import Modal from './Modal';
-import Button from './Button';
+import { Modal, Button } from '.';
 import { useAuth } from '../../contexts/AuthContext';
 
 export interface SessionTimeoutProps extends BaseComponentProps {

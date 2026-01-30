@@ -1,6 +1,6 @@
 import React from 'react';
 import { BaseComponentProps } from '../../lib/types';
-import Button from './Button';
+import { Button } from '.';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
 

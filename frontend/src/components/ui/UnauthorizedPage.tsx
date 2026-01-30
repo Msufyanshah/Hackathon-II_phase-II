@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Button } from './Button';
+import { Button } from '.';
 import { BaseComponentProps } from '../../lib/types';
 
 interface UnauthorizedPageProps extends BaseComponentProps {

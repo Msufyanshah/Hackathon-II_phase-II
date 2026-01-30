@@ -1,3 +1,4 @@
+import React from 'react';
 import '../styles/globals.css';
 import AuthProviderWrapper from '../components/providers/AuthProviderWrapper';
 

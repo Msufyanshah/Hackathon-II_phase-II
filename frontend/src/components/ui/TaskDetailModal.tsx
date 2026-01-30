@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { BaseComponentProps, Task } from '../../lib/types';
 import { TaskService } from '../../services/tasks';
-import Modal from './Modal';
-import TaskForm from '../forms/TaskForm';
-import Button from './Button';
+import { Modal, Button, ErrorMessage } from '.';
 import { Text, Heading } from './Typography';
-import ErrorMessage from './ErrorMessage';
+import TaskForm from '../forms/TaskForm';
 
 interface TaskDetailModalProps extends BaseComponentProps {
   taskId: string;

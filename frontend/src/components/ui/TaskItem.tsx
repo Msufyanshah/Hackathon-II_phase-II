@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { BaseComponentProps, Task } from '../../lib/types';
-import Card from './Card';
-import Button from './Button';
-import Modal from './Modal';
+import { Card, Button, Modal } from '.';
 import TaskForm from '../forms/TaskForm';
 import apiClient from '../../lib/ApiClient';
 
