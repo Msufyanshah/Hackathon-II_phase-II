@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { User } from '../lib/types';
 import { saveToken, getToken, removeToken, isAuthenticated as isAuthenticatedUtil, decodeToken, isTokenExpired } from '../lib/auth';

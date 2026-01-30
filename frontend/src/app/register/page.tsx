@@ -4,32 +4,14 @@ import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import RegisterForm from '../../components/forms/RegisterForm';
 import Layout from '../../components/ui/Layout';
-import { useRouter } from 'next/router';
+import { redirect } from 'next/navigation';
 
 const RegisterPage: React.FC = () => {
   const { state } = useAuth();
-  const router = useRouter();
-
-  // Mock router if not in Next.js context
-  const mockRouter = {
-    push: (path: string) => {
-      if (typeof window !== 'undefined') {
-        window.location.href = path;
-      }
-    }
-  };
-
-  const effectiveRouter = router || mockRouter;
 
   // If already authenticated, redirect to dashboard
-  React.useEffect(() => {
-    if (state.isAuthenticated) {
-      effectiveRouter.push('/dashboard');
-    }
-  }, [state.isAuthenticated]);
-
   if (state.isAuthenticated) {
-    return null; // Or redirect in a real Next.js app
+    redirect('/dashboard');
   }
 
   return (
@@ -40,8 +22,7 @@ const RegisterPage: React.FC = () => {
 
           <RegisterForm
             onSuccess={() => {
-              // In a real app, this would be handled by the router in RegisterForm
-              effectiveRouter.push('/dashboard');
+              // The RegisterForm handles the redirect internally
             }}
             onError={(error) => {
               console.error('Registration error:', error);

@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Button } from '../components/ui/Button';
-import { Card } from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import Card from '../components/ui/Card';
 import Link from 'next/link';
 
 const HomePage: React.FC = () => {

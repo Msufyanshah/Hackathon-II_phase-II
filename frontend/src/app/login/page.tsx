@@ -4,32 +4,14 @@ import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import LoginForm from '../../components/forms/LoginForm';
 import Layout from '../../components/ui/Layout';
-import { useRouter } from 'next/router';
+import { redirect } from 'next/navigation';
 
 const LoginPage: React.FC = () => {
   const { state } = useAuth();
-  const router = useRouter();
-
-  // Mock router if not in Next.js context
-  const mockRouter = {
-    push: (path: string) => {
-      if (typeof window !== 'undefined') {
-        window.location.href = path;
-      }
-    }
-  };
-
-  const effectiveRouter = router || mockRouter;
 
   // If already authenticated, redirect to dashboard
-  React.useEffect(() => {
-    if (state.isAuthenticated) {
-      effectiveRouter.push('/dashboard');
-    }
-  }, [state.isAuthenticated]);
-
   if (state.isAuthenticated) {
-    return null; // Or redirect in a real Next.js app
+    redirect('/dashboard');
   }
 
   return (
@@ -40,8 +22,7 @@ const LoginPage: React.FC = () => {
 
           <LoginForm
             onSuccess={() => {
-              // In a real app, this would be handled by the router in LoginForm
-              effectiveRouter.push('/dashboard');
+              // The LoginForm handles the redirect internally
             }}
             onError={(error) => {
               console.error('Login error:', error);
