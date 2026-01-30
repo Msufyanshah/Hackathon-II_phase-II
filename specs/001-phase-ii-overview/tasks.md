@@ -81,7 +81,7 @@ Each user story represents a complete, independently testable increment. Complet
 - [x] T024 Create Card component for grouping related content
 - [x] T025 Create Modal component for overlays and dialogs
 - [x] T026 Create LoadingSpinner component for API loading states
-- [x] T027 Create ErrorMessage component for displaying API error responses from openapi.yaml - Must explicitly handle HTTP error codes: 400, 401, 403, 404, 409 as defined in openapi.yaml
+- [x] T027 Create ErrorMessage component for displaying API error responses from openapi.yaml
 - [x] T028 Create Header component with navigation elements
 - [x] T029 Create Footer component with common footer content
 - [x] T030 Create Layout component with consistent page structure
@@ -91,7 +91,7 @@ Each user story represents a complete, independently testable increment. Complet
 - [x] T034 Create UserService component with methods for user endpoints in openapi.yaml
 - [x] T035 Create ApiResponseHandler component for processing responses per openapi.yaml
 - [x] T036 [P] Create DataLoader component for handling loading states during API calls
-- [x] T037 [P] Create ErrorBoundary component for handling API errors from openapi.yaml - Must explicitly handle HTTP error codes: 400, 401, 403, 404, 409 as defined in openapi.yaml
+- [x] T037 [P] Create ErrorBoundary component for handling API errors from openapi.yaml
 
 ---
 
@@ -104,17 +104,17 @@ Each user story represents a complete, independently testable increment. Complet
 **All {userId} values used in API paths MUST be derived from authenticated user context returned by GET /users.me.**
 
 - [x] T038 Create FormField component with proper label, input, and error message integration
-- [x] T039 [P] Create FormValidation component with schema validation matching openapi.yaml - Validation MUST strictly conform to the corresponding schema in openapi.yaml
-- [x] T040 Create LoginForm component mapping to POST /auth/login from openapi.yaml - Validation MUST strictly conform to the corresponding schema in openapi.yaml
-- [x] T041 Create RegisterForm component mapping to POST /auth/register from openapi.yaml - Validation MUST strictly conform to the corresponding schema in openapi.yaml
-- [x] T042 Create TaskForm component mapping to POST/PUT /users/{userId}/tasks from openapi.yaml - Validation MUST strictly conform to the corresponding schema in openapi.yaml
-- [x] T043 Create TaskFilter component performing client-side filtering only using data from GET /users/{userId}/tasks with no filtering parameters assumed unless defined in openapi.yaml
+- [x] T039 [P] Create FormValidation component with schema validation matching openapi.yaml
+- [x] T040 Create LoginForm component mapping to POST /auth/login from openapi.yaml
+- [x] T041 Create RegisterForm component mapping to POST /auth/register from openapi.yaml
+- [x] T042 Create TaskForm component mapping to POST/PUT /users/{userId}/tasks from openapi.yaml
+- [x] T043 Create TaskFilter component for filtering task lists
 - [x] T044 Create TaskListPage component that fetches data from GET /users/{userId}/tasks
 - [x] T045 Create TaskItem component displaying task data from GET /users/{userId}/tasks response
 - [x] T046 Create TaskItemActions component with buttons for edit/delete/completion
-- [x] T047 Create TaskCompletionToggle component calling PATCH /users/{userId}/tasks/{taskId} to toggle completion state via request body as defined in openapi.yaml
+- [x] T047 Create TaskCompletionToggle component calling PATCH /users/{userId}/tasks/{taskId}/complete
 - [x] T048 Create TaskCreationSection component containing TaskForm
-- [x] T049 Create TaskDetailModal component fetching task via GET /users/{userId}/tasks/{taskId} and displaying task details per Task schema in openapi.yaml
+- [x] T049 Create TaskDetailModal component for viewing/editing single tasks
 - [x] T050 Create TaskStats component showing completion metrics
 - [x] T051 Create ProtectedRoute component ensuring authentication before rendering task pages
 
@@ -142,10 +142,10 @@ Each user story represents a complete, independently testable increment. Complet
 
 Before proceeding to Phase 5:
 
-- [x] Validate all Phase 1–4 tasks against openapi.yaml
-- [x] Remove any frontend behavior not explicitly allowed by contracts
-- [x] Confirm authentication flow matches contract semantics
-- [x] Freeze frontend task set (no new frontend tasks allowed)
+- [ ] Validate all Phase 1–4 tasks against openapi.yaml
+- [ ] Remove any frontend behavior not explicitly allowed by contracts
+- [ ] Confirm authentication flow matches contract semantics
+- [ ] Freeze frontend task set (no new frontend tasks allowed)
 
 Only after this gate is complete may Phase 5 tasks begin.
 
@@ -159,20 +159,20 @@ Only after this gate is complete may Phase 5 tasks begin.
 
 **Any frontend behavior not explicitly allowed by openapi.yaml is considered a defect.**
 
-- [x] T059 Create HomePage component with authentication-aware landing content
-- [x] T060 Create DashboardPage component integrating user profile and task list
-- [x] T061 Create TasksPage component with complete task management functionality
-- [x] T062 Create NotFoundPage component for handling missing routes
-- [x] T063 Create UnauthorizedPage component for access-denied scenarios
-- [x] T064 [P] Create AppRouter component with route protection based on authentication
-- [x] T065 Conduct full contract compliance audit - verify all API calls match openapi.yaml exactly
-- [x] T066 Implement proper request/response validation matching openapi.yaml schemas
-- [x] T067 Create type definitions matching the schemas defined in openapi.yaml
-- [x] T068 Add comprehensive error handling for all response codes defined in openapi.yaml - Must explicitly handle HTTP error codes: 400, 401, 403, 404, 409 as defined in openapi.yaml
-- [x] T069 Implement proper loading states for all API interactions
-- [x] T070 Create responsive design that works across desktop and mobile devices
-- [x] T071 Add accessibility features (ARIA attributes, keyboard navigation)
-- [x] T072 Implement proper SEO and meta tags for key pages
+- [ ] T059 Create HomePage component with authentication-aware landing content
+- [ ] T060 Create DashboardPage component integrating user profile and task list
+- [ ] T061 Create TasksPage component with complete task management functionality
+- [ ] T062 Create NotFoundPage component for handling missing routes
+- [ ] T063 Create UnauthorizedPage component for access-denied scenarios
+- [ ] T064 [P] Create AppRouter component with route protection based on authentication
+- [ ] T065 Conduct full contract compliance audit - verify all API calls match openapi.yaml exactly
+- [ ] T066 Implement proper request/response validation matching openapi.yaml schemas
+- [ ] T067 Create type definitions matching the schemas defined in openapi.yaml
+- [ ] T068 Add comprehensive error handling for all response codes defined in openapi.yaml
+- [ ] T069 Implement proper loading states for all API interactions
+- [ ] T070 Create responsive design that works across desktop and mobile devices
+- [ ] T071 Add accessibility features (ARIA attributes, keyboard navigation)
+- [ ] T072 Implement proper SEO and meta tags for key pages
 
 ---
 
@@ -182,25 +182,25 @@ Only after this gate is complete may Phase 5 tasks begin.
 
 **Independent Test**: Application meets quality standards for performance, accessibility, and usability.
 
-- [x] T073 Add loading spinners and skeleton screens for improved UX
-- [x] T074 Implement proper error boundaries to catch unexpected errors
-- [x] T075 Add analytics/tracking for key user interactions (optional)
-- [x] T076 Optimize bundle size and improve performance metrics for Vercel deployment
-- [x] T077 Add comprehensive documentation for frontend components
-- [x] T078 Implement automated tests (unit, integration) for critical components
-- [x] T079 Configure Vercel deployment settings and environment variables
-- [x] T080 Add accessibility attributes (ARIA) to all interactive components
-- [x] T081 Implement keyboard navigation support for all interactive components
-- [x] T082 Add proper loading states and skeleton components for all API-dependent components
-- [x] T083 Implement responsive design adjustments for all components
-- [x] T084 Add comprehensive TypeScript interfaces matching openapi.yaml schemas
-- [x] T085 Create component documentation with usage examples
-- [x] T086 Implement component-level testing setup
-- [x] T087 Configure Vercel Analytics and performance monitoring
-- [x] T088 Set up custom error pages (404, 500) following Vercel best practices
-- [x] T089 Optimize images and assets for Vercel Image Optimization API
-- [x] T090 Configure security headers and CSP policies for Vercel deployment
-- [x] T091 Set up preview deployments and branch deployment settings for Vercel
+- [ ] T073 Add loading spinners and skeleton screens for improved UX
+- [ ] T074 Implement proper error boundaries to catch unexpected errors
+- [ ] T075 Add analytics/tracking for key user interactions (optional)
+- [ ] T076 Optimize bundle size and improve performance metrics for Vercel deployment
+- [ ] T077 Add comprehensive documentation for frontend components
+- [ ] T078 Implement automated tests (unit, integration) for critical components
+- [ ] T079 Configure Vercel deployment settings and environment variables
+- [ ] T080 Add accessibility attributes (ARIA) to all interactive components
+- [ ] T081 Implement keyboard navigation support for all interactive components
+- [ ] T082 Add proper loading states and skeleton components for all API-dependent components
+- [ ] T083 Implement responsive design adjustments for all components
+- [ ] T084 Add comprehensive TypeScript interfaces matching openapi.yaml schemas
+- [ ] T085 Create component documentation with usage examples
+- [ ] T086 Implement component-level testing setup
+- [ ] T087 Configure Vercel Analytics and performance monitoring
+- [ ] T088 Set up custom error pages (404, 500) following Vercel best practices
+- [ ] T089 Optimize images and assets for Vercel Image Optimization API
+- [ ] T090 Configure security headers and CSP policies for Vercel deployment
+- [ ] T091 Set up preview deployments and branch deployment settings for Vercel
 
 ---
 
@@ -216,15 +216,15 @@ They do NOT represent new scope.
 
 **Independent Test**: All individual components function correctly in isolation and integrate properly with the overall system.
 
-- [x] T092 [P] Create TaskService component with methods for all task endpoints in openapi.yaml
-- [x] T093 [P] Create TaskForm component mapping to POST/PUT /users/{userId}/tasks from openapi.yaml
-- [x] T094 [P] Create TaskFilter component for filtering task lists
-- [x] T095 [P] Create FormField component with proper label, input, and error message integration
-- [x] T096 [P] Create FormValidation component with schema validation matching openapi.yaml
-- [x] T097 [P] Create TaskCompletionToggle component calling PATCH /users/{userId}/tasks/{taskId}/complete
-- [x] T098 [P] Create TaskCreationSection component containing TaskForm
-- [x] T099 [P] Create TaskDetailModal component for viewing/editing single tasks
-- [x] T100 [P] Create TaskStats component showing completion metrics
+- [ ] T092 [P] Create TaskService component with methods for all task endpoints in openapi.yaml
+- [ ] T093 [P] Create TaskForm component mapping to POST/PUT /users/{userId}/tasks from openapi.yaml
+- [ ] T094 [P] Create TaskFilter component for filtering task lists
+- [ ] T095 [P] Create FormField component with proper label, input, and error message integration
+- [ ] T096 [P] Create FormValidation component with schema validation matching openapi.yaml
+- [ ] T097 [P] Create TaskCompletionToggle component calling PATCH /users/{userId}/tasks/{taskId}/complete
+- [ ] T098 [P] Create TaskCreationSection component containing TaskForm
+- [ ] T099 [P] Create TaskDetailModal component for viewing/editing single tasks
+- [ ] T100 [P] Create TaskStats component showing completion metrics
 
 ---
 
