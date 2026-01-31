@@ -12,7 +12,8 @@
       "Bash(git rev-parse --git-dir)",
       "Bash(git checkout main)",
       "Bash(dir \"*.md\" /s)",
-      "Bash(git fetch --all --prune)"
+      "Bash(git fetch --all --prune)",
+      "Bash(powershell -Command \".specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks\")"
     ]
   }
 }
