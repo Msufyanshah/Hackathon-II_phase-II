@@ -1,0 +1,103 @@
+# Hugging Face Spaces Configuration
+# Defines how the backend service should be deployed on Hugging Face Spaces
+
+api_version: 0.0.1
+runtime:
+  cpu: 2
+  memory: 8GiB
+  accelerator: cpu
+  concurrency: 1
+  timeout: 300
+  secrets:
+    - name: DATABASE_URL
+      description: "Neon PostgreSQL connection string"
+      required: true
+    - name: SECRET_KEY
+      description: "JWT secret key for authentication"
+      required: true
+    - name: BETTER_AUTH_SECRET
+      description: "Better Auth secret (should match frontend)"
+      required: true
+  env:
+    - name: PORT
+      value: "7860"
+    - name: NODE_ENV
+      value: "production"
+    - name: LOG_LEVEL
+      value: "INFO"
+    - name: ACCESS_TOKEN_EXPIRE_MINUTES
+      value: "15"
+    - name: REFRESH_TOKEN_EXPIRE_DAYS
+      value: "7"
+    - name: ALGORITHM
+      value: "HS256"
+    - name: ACCESS_TOKEN_TYPE
+      value: "bearer"
+    - name: ALLOWED_ORIGINS
+      value: "http://localhost:3000,http://localhost:3001,https://frontend-nvs7el7k7-muhammad-sufyans-projects-fa6b4cf9.vercel.app"
+
+dependencies:
+  - pip
+  - python==3.11
+
+python_packages:
+  - fastapi==0.115.0
+  - sqlmodel==0.0.22
+  - uvicorn[standard]==0.32.0
+  - python-jose[cryptography]==3.3.0
+  - passlib[bcrypt]==1.7.4
+  - python-multipart==0.0.20
+  - pydantic==2.10.3
+  - pydantic-settings==2.7.0
+  - psycopg2-binary==2.9.10
+  - alembic==1.14.0
+  - python-dateutil==2.9.0
+  - python-slugify==8.0.4
+  - requests==2.32.3
+  - httpx==0.27.2
+  - aiofiles==24.1.0
+
+model: null
+datasets: []
+tags:
+  - fastapi
+  - python
+  - todo
+  - api
+  - postgresql
+  - neon
+  - jwt
+  - authentication
+
+title: Todo Application Backend API
+emoji: 🚀
+short_description: FastAPI backend for the Todo Application with JWT authentication and Neon PostgreSQL
+description: |
+  # Todo Application Backend API
+
+  This is a FastAPI backend service for the Todo Application, providing secure, authenticated API endpoints for task management with user data isolation.
+
+  ## Features
+  - JWT-based authentication with user data isolation
+  - RESTful API endpoints for task management
+  - Neon Serverless PostgreSQL database
+  - Contract-first development following shared API contracts
+  - Hugging Face Spaces deployment ready
+
+  ## Endpoints
+  - `POST /auth/register` - User registration
+  - `POST /auth/login` - User authentication
+  - `GET /api/{user_id}/tasks` - Get user's tasks
+  - `POST /api/{user_id}/tasks` - Create new task
+  - `GET /api/{user_id}/tasks/{task_id}` - Get specific task
+  - `PUT /api/{user_id}/tasks/{task_id}` - Update task
+  - `PATCH /api/{user_id}/tasks/{task_id}` - Toggle task completion
+  - `DELETE /api/{user_id}/tasks/{task_id}` - Delete task
+  - `GET /api/users/me` - Get current user info
+
+  ## Security
+  All protected endpoints require JWT authentication in the Authorization header as "Bearer {token}".
+  Users can only access their own data.
+
+  ## Deployment
+  Deployed on Hugging Face Spaces with Neon PostgreSQL backend.
