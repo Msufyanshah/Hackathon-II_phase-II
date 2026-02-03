@@ -13,7 +13,9 @@
       "Bash(git checkout main)",
       "Bash(dir \"*.md\" /s)",
       "Bash(git fetch --all --prune)",
-      "Bash(powershell -Command \".specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks\")"
+      "Bash(powershell -Command \".specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks\")",
+      "Bash(curl -s http://127.0.0.1:8000/openapi.json)",
+      "Bash(python -c \"from src.main import app; print\\(''Backend imports successfully''\\)\")"
     ]
   }
 }

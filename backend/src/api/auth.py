@@ -102,13 +102,15 @@ async def login_user(
         data={"sub": str(user.id)}, expires_delta=access_token_expires
     )
 
+    user_response = UserResponse(
+        id=user.id,
+        email=user.email,
+        username=user.username,
+        created_at=user.created_at
+    )
+
     return LoginResponse(
         access_token=access_token,
         token_type="bearer",
-        user={
-            "id": user.id,
-            "email": user.email,
-            "username": user.username,
-            "created_at": user.created_at
-        }
+        user=user_response
     )

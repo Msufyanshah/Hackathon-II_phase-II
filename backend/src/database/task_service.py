@@ -19,22 +19,6 @@ class TaskService:
         statement = select(Task).where(Task.user_id == user_id)
         return session.exec(statement).all()
 
-    def create_task(self, session: Session, user_id: UUID, title: str, description: Optional[str] = None) -> Task:
-        """
-        Create a new task for a specific user
-        """
-        task = Task(
-            title=title,
-            description=description,
-            user_id=user_id
-        )
-
-        session.add(task)
-        session.commit()
-        session.refresh(task)
-
-        return task
-
     def get_task_by_id(self, session: Session, task_id: UUID, user_id: UUID) -> Optional[Task]:
         """
         Get a specific task by ID for a specific user (enforcing user isolation)
