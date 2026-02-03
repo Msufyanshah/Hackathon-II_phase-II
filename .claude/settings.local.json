@@ -15,7 +15,8 @@
       "Bash(git fetch --all --prune)",
       "Bash(powershell -Command \".specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks\")",
       "Bash(curl -s http://127.0.0.1:8000/openapi.json)",
-      "Bash(python -c \"from src.main import app; print\\(''Backend imports successfully''\\)\")"
+      "Bash(python -c \"from src.main import app; print\\(''Backend imports successfully''\\)\")",
+      "Bash(git commit -m \"chore\\(phr\\): add prompt history records for auth fixes and Docker setup\n\n- Add PHR for backend auth endpoint fixes\n- Add PHR for Docker image build and test\n- Document the changes made to fix register/login endpoints\n- Record the Docker build and testing process\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\")"
     ]
   }
 }
