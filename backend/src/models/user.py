@@ -29,8 +29,9 @@ class User(SQLModel, table=True):
     created_at: datetime = Field(default=datetime.utcnow())
     updated_at: datetime = Field(default=datetime.utcnow(), nullable=False)
 
-    # Relationship to tasks
+    # Relationships
     tasks: List["Task"] = Relationship(back_populates="user", cascade_delete=True)
+    auth_tokens: List["AuthToken"] = Relationship(back_populates="user", cascade_delete=True)
 
 
 # Update the model to use the correct datetime behavior
