@@ -198,4 +198,4 @@ alembic/
 alembic.ini
 alembic/env.py
 alembic/versions/
-alembic/script.py.mako
+alembic/script.py.makobackend/.env

@@ -68,26 +68,6 @@ class UserService:
             return None
         return user
 
-    def create_user(self, session: Session, email: str, username: str, password: str) -> User:
-        """
-        Create a new user with hashed password
-        """
-        from ..utils.password import get_password_hash
-
-        hashed_password = get_password_hash(password)
-
-        user = User(
-            email=email,
-            username=username,
-            hashed_password=hashed_password
-        )
-
-        session.add(user)
-        session.commit()
-        session.refresh(user)
-
-        return user
-
     def update_user(self, session: Session, user_id: UUID, **kwargs) -> Optional[User]:
         """
         Update user with provided fields

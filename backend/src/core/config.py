@@ -1,6 +1,10 @@
 import os
 from pydantic_settings import BaseSettings
 from typing import List, Optional
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 class Settings(BaseSettings):
@@ -17,8 +21,11 @@ class Settings(BaseSettings):
     # Better Auth Secret for JWT compatibility
     BETTER_AUTH_SECRET: str = os.getenv("BETTER_AUTH_SECRET", "")
 
-    # CORS settings
-    ALLOWED_ORIGINS: List[str] = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001").split(",")
+    # CORS settings - parse comma-separated string into list
+    @property
+    def ALLOWED_ORIGINS(self) -> List[str]:
+        origins_str = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001,https://frontend-nvs7el7k7-muhammad-sufyans-projects-fa6b4cf9.vercel.app")
+        return [origin.strip() for origin in origins_str.split(",") if origin.strip()]
 
     # Logging settings
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
