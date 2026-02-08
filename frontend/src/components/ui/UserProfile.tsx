@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BaseComponentProps, User } from '../../lib/types';
 import { Card, DataLoader } from '.';
 import { Heading, Text } from './Typography';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/BetterAuthContext';
 import apiClient from '../../lib/ApiClient';
 
 export interface UserProfileProps extends BaseComponentProps {
@@ -15,7 +15,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
   showActions = false,
   className = '',
 }) => {
-  const { state: authState } = useAuth();
+  const { user: currentUser, isAuthenticated, isLoading: authLoading } = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,17 +31,17 @@ const UserProfile: React.FC<UserProfileProps> = ({
         if (userId) {
           // If a specific user ID is provided, we'd need an API endpoint to fetch that user
           // For now, we'll just use the current user if IDs match or if no specific ID is requested
-          if (userId === authState.user?.id) {
-            userData = authState.user!;
+          if (userId === currentUser?.id) {
+            userData = currentUser!;
           } else {
             throw new Error('Cannot fetch other users\' profiles with current implementation');
           }
         } else {
           // Use current user
-          if (!authState.user) {
+          if (!currentUser) {
             throw new Error('No user is currently authenticated');
           }
-          userData = authState.user;
+          userData = currentUser;
         }
 
         setUser(userData);
@@ -53,15 +53,15 @@ const UserProfile: React.FC<UserProfileProps> = ({
       }
     };
 
-    if (authState.isAuthenticated) {
+    if (isAuthenticated) {
       fetchUser();
     } else {
       setIsLoading(false);
       setError('User not authenticated');
     }
-  }, [userId, authState]);
+  }, [userId, currentUser, isAuthenticated]);
 
-  if (!authState.isAuthenticated) {
+  if (!isAuthenticated) {
     return (
       <Card className={className}>
         <Text variant="muted">Please log in to view user profile</Text>
@@ -77,7 +77,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
     );
   }
 
-  if (isLoading || !user) {
+  if (isLoading || authLoading || !user) {
     return (
       <Card className={className}>
         <div className="flex justify-center p-4">

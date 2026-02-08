@@ -1,6 +1,6 @@
 import React from 'react';
 import { BaseComponentProps } from '../../lib/types';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/BetterAuthContext';
 import ProtectedRoute from '../layouts/ProtectedRoute';
 import UnauthorizedPage from '../ui/UnauthorizedPage';
 import { useRouter } from 'next/navigation';
@@ -10,11 +10,11 @@ interface AppRouterProps extends BaseComponentProps {
 }
 
 const AppRouter: React.FC<AppRouterProps> = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   // During loading state, return null or a loading indicator
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
@@ -47,9 +47,9 @@ export const withProtectedRoute = (WrappedComponent: React.ComponentType<any>) =
 
 // Export a hook for checking authentication in components
 export const useAuthGuard = () => {
-  const { user, loading } = useAuth();
+  const { user, isLoading } = useAuth();
 
-  if (loading) {
+  if (isLoading) {
     return { isAuthenticated: null, isLoading: true }; // null indicates uncertain state
   }
 

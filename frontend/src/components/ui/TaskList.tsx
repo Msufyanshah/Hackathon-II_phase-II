@@ -20,8 +20,8 @@ export const TaskList: React.FC<TaskListProps> = ({
   const [filter, setFilter] = React.useState<'all' | 'active' | 'completed'>('all');
 
   const filteredTasks = tasks.filter(task => {
-    if (filter === 'active') return !task.isCompleted;
-    if (filter === 'completed') return task.isCompleted;
+    if (filter === 'active') return !task.completed;
+    if (filter === 'completed') return task.completed;
     return true;
   });
 

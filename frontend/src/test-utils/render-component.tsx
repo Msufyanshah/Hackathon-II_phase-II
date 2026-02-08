@@ -1,9 +1,8 @@
-import React, { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
-import { AuthProvider } from '../contexts/AuthContext';
+import { AuthProvider } from '../contexts/BetterAuthContext';
+import React, { ReactElement } from 'react';
 
-// Wrapper component to provide all necessary contexts for testing
-const AllProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <AuthProvider>
       {children}
