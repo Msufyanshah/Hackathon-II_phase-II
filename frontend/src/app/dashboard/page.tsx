@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/BetterAuthContext';
 import { TaskService } from '../../services/tasks';
 import { Task } from '../../lib/types';
 import { Card, Button, TaskCreationSection, TaskList, TaskStats } from '../../components/ui';
@@ -26,6 +26,7 @@ const DashboardPage: React.FC = () => {
     setError(null);
 
     try {
+      // Using the user ID from Better Auth session
       const userTasks = await TaskService.getUserTasks(user.id);
       setTasks(userTasks);
     } catch (err: any) {

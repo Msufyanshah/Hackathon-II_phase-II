@@ -1,7 +1,7 @@
 import React from 'react';
 import { BaseComponentProps } from '../../lib/types';
 import { Button } from '.';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/BetterAuthContext';
 import { useRouter } from 'next/router';
 
 export interface LogoutButtonProps extends BaseComponentProps {

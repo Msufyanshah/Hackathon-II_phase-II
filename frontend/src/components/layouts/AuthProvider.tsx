@@ -1,16 +1,14 @@
-import React from 'react';
-import { AuthProvider as AuthProviderComponent } from '../../contexts/AuthContext';
+'use client';
 
-// This is a wrapper component for the AuthContext Provider
-// It's already implemented in the contexts/AuthContext.tsx file
-// This component exists to match the task requirements and provide a consistent interface
+import React, { ReactNode } from 'react';
+import { AuthProvider as AuthProviderComponent } from '../../contexts/BetterAuthContext';
 
-const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <AuthProviderComponent>
-      {children}
-    </AuthProviderComponent>
-  );
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  return <AuthProviderComponent>{children}</AuthProviderComponent>;
 };
 
 export default AuthProvider;

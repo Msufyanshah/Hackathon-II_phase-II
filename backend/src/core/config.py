@@ -18,9 +18,6 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "7"))
     ACCESS_TOKEN_TYPE: str = os.getenv("ACCESS_TOKEN_TYPE", "bearer")
 
-    # Better Auth Secret for JWT compatibility
-    BETTER_AUTH_SECRET: str = os.getenv("BETTER_AUTH_SECRET", "")
-
     # CORS settings - parse comma-separated string into list
     @property
     def ALLOWED_ORIGINS(self) -> List[str]:

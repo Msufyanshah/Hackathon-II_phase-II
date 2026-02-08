@@ -18,7 +18,11 @@
       "Bash(python -c \"from src.main import app; print\\(''Backend imports successfully''\\)\")",
       "Bash(git commit -m \"chore\\(phr\\): add prompt history records for auth fixes and Docker setup\n\n- Add PHR for backend auth endpoint fixes\n- Add PHR for Docker image build and test\n- Document the changes made to fix register/login endpoints\n- Record the Docker build and testing process\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\")",
       "Bash(git commit -m \"feat\\(deployment\\): prepare backend for Hugging Face deployment with Neon database\n\n- Integrate Neon PostgreSQL database connection with backend application\n- Update OpenAPI specification to match actual register endpoint response\n- Fix SQLAlchemy relationship error between User and AuthToken models\n- Add .env file to .gitignore for security of database credentials\n- Create PHR records documenting auth endpoint fixes and Docker setup\n- Prepare Docker image for Hugging Face Spaces deployment\n- Configure environment variables for production deployment\n- Ensure proper database connection using environment variables\n- Verify all auth endpoints \\(register/login\\) work with Neon database\n\nThe backend is now ready for deployment to Hugging Face Spaces with Neon database integration:\n- Register endpoint properly returns LoginResponse with JWT token\n- Database relationships correctly configured for PostgreSQL\n- Security measures in place to protect sensitive credentials\n- Docker image builds and runs successfully\n- All API endpoints tested and functional\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\")",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm install @better-auth/react)",
+      "Bash(npx next build)",
+      "Bash(bash .specify/scripts/bash/create-phr.sh:*)"
     ]
   }
 }

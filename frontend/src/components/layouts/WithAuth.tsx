@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/BetterAuthContext';
 import { useRouter } from 'next/router';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import ErrorMessage from '../ui/ErrorMessage';
@@ -10,7 +10,7 @@ export function WithAuth<P extends Record<string, unknown>>(
   redirectIfNotAuthenticated = '/login'
 ) {
   const AuthenticatedComponent: React.FC<P> = (props) => {
-    const { state } = useAuth();
+    const { isAuthenticated, isLoading } = useAuth();
     const router = useRouter();
 
     // Mock router if not in Next.js context
@@ -25,7 +25,7 @@ export function WithAuth<P extends Record<string, unknown>>(
     const effectiveRouter = router || mockRouter;
 
     // If still loading auth state, show loading indicator
-    if (state.isLoading) {
+    if (isLoading) {
       return (
         <div className="flex justify-center items-center h-64">
           <LoadingSpinner label="Checking authentication..." />
@@ -34,7 +34,7 @@ export function WithAuth<P extends Record<string, unknown>>(
     }
 
     // If not authenticated, redirect
-    if (!state.isAuthenticated) {
+    if (!isAuthenticated) {
       useEffect(() => {
         effectiveRouter.push(redirectIfNotAuthenticated);
       }, []);

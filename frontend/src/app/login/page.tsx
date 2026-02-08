@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/BetterAuthContext';
 import LoginForm from '../../components/forms/LoginForm';
 import Layout from '../../components/ui/Layout';
 import { redirect } from 'next/navigation';
 
 const LoginPage: React.FC = () => {
-  const { state } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   // If already authenticated, redirect to dashboard
-  if (state.isAuthenticated) {
+  if (isAuthenticated) {
     redirect('/dashboard');
   }
 

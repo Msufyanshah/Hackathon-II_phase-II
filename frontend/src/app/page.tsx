@@ -1,15 +1,15 @@
 'use client';
 
 import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/BetterAuthContext';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Link from 'next/link';
 
 const HomePage: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { user, isLoading } = useAuth();
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>

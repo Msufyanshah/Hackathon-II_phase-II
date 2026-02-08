@@ -1,6 +1,6 @@
 import React from 'react';
 import { BaseComponentProps } from '../../lib/types';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/BetterAuthContext';
 import { Button } from '.';
 
 export interface HeaderProps extends BaseComponentProps {
@@ -14,7 +14,7 @@ const Header: React.FC<HeaderProps> = ({
   className = '',
   ...props
 }) => {
-  const { state, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
 
   return (
     <header className={`bg-white shadow-sm ${className}`} {...props}>
@@ -23,9 +23,9 @@ const Header: React.FC<HeaderProps> = ({
 
         {showAuthControls && (
           <div className="flex items-center space-x-4">
-            {state.isAuthenticated ? (
+            {isAuthenticated ? (
               <>
-                <span className="text-sm text-gray-600">Welcome, {state.user?.username}</span>
+                <span className="text-sm text-gray-600">Welcome, {user?.username}</span>
                 <Button variant="secondary" onClick={logout}>Logout</Button>
               </>
             ) : (

@@ -3,7 +3,7 @@ import { BaseComponentProps, UserRegistrationRequest } from '../../lib/types';
 import FormField from './FormField';
 import Button from '../ui/Button';
 import { UserRegistrationSchema } from './FormValidation';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/BetterAuthContext';
 
 // Mock router since we're not in a Next.js component yet
 const mockRouter = {

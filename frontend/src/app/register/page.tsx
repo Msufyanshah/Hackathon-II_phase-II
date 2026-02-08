@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/BetterAuthContext';
 import RegisterForm from '../../components/forms/RegisterForm';
 import Layout from '../../components/ui/Layout';
 import { redirect } from 'next/navigation';
 
 const RegisterPage: React.FC = () => {
-  const { state } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   // If already authenticated, redirect to dashboard
-  if (state.isAuthenticated) {
+  if (isAuthenticated) {
     redirect('/dashboard');
   }
 

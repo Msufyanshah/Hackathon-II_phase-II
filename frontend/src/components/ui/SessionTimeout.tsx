@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BaseComponentProps } from '../../lib/types';
 import { Modal, Button } from '.';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/BetterAuthContext';
 
 export interface SessionTimeoutProps extends BaseComponentProps {
   warningTime?: number; // Time in seconds before timeout to show warning (default: 60 seconds)

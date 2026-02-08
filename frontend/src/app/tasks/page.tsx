@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Task } from '../../lib/types';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/BetterAuthContext';
 import DataLoader from '../../components/ui/DataLoader';
 import TaskItem from '../../components/ui/TaskItem';
 import TaskCreationSection from '../../components/ui/TaskCreationSection';
@@ -12,10 +12,10 @@ import ErrorMessage from '../../components/ui/ErrorMessage';
 import Layout from '../../components/ui/Layout';
 
 const TaskListPage: React.FC = () => {
-  const { state } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filterParams, setFilterParams] = useState({
     searchTerm: '',
@@ -26,14 +26,13 @@ const TaskListPage: React.FC = () => {
 
   // Load tasks from API
   const loadTasks = async (): Promise<Task[]> => {
-    if (!state.user) {
+    if (!user) {
       throw new Error('User not authenticated');
     }
 
     try {
-      const response = await fetch(`/api/users/${state.user.id}/tasks`, {
+      const response = await fetch(`/api/users/${user.id}/tasks`, {
         headers: {
-          'Authorization': `Bearer ${state.token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -103,10 +102,10 @@ const TaskListPage: React.FC = () => {
 
   // Reload tasks when user changes
   useEffect(() => {
-    if (state.user) {
+    if (user) {
       const fetchTasks = async () => {
         try {
-          setIsLoading(true);
+          setLoading(true);
           setError(null);
 
           const tasksData = await loadTasks();
@@ -114,13 +113,13 @@ const TaskListPage: React.FC = () => {
         } catch (err: any) {
           setError(err.message);
         } finally {
-          setIsLoading(false);
+          setLoading(false);
         }
       };
 
       fetchTasks();
     }
-  }, [state.user]);
+  }, [user]);
 
   // Handler for when a task is updated
   const handleTaskUpdate = (updatedTask: Task) => {
@@ -154,7 +153,7 @@ const TaskListPage: React.FC = () => {
     }));
   };
 
-  if (!state.isAuthenticated) {
+  if (!user) {
     return (
       <Layout>
         <div className="flex justify-center items-center h-64">
@@ -170,13 +169,13 @@ const TaskListPage: React.FC = () => {
         <h1 className="text-2xl font-bold mb-6">My Tasks</h1>
 
         <TaskCreationSection
-          userId={state.user?.id || ''}
+          userId={user?.id || ''}
           onTaskCreate={handleTaskCreate}
         />
 
         <TaskFilter onFilterChange={handleFilterChange} />
 
-        {isLoading ? (
+        {(loading || authLoading) ? (
           <div className="flex justify-center py-8">
             <LoadingSpinner label="Loading tasks..." />
           </div>
