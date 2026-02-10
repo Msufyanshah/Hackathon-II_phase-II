@@ -2,9 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authClient } from '../lib/better-auth-client';
-import { authTokenManager } from '../lib/auth-token-manager';
-import { useStore } from 'better-auth/react';
-
+import { updateToken } from '../lib/auth-token-manager';
 
 interface AuthContextType {
   user: any | null;
@@ -19,63 +17,44 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Use Better Auth's session hook from the client instance
-  // const { data: session, isPending: isAuthLoading } = authClient.useSession();
-  const { data: session, isLoading: isAuthLoading } =
-  useStore(authClient.$store);
-
-
+  const { data: session, isPending: isAuthLoading } = authClient.useSession();
   const [apiToken, setApiToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Combine loading states
+  // Sync loading state
   useEffect(() => {
-    // Better Auth session loading state combined with our local loading state
     setIsLoading(isAuthLoading);
   }, [isAuthLoading]);
 
-  // Update the API client token when it changes
+  // Sync token with your manager (for other API calls)
   useEffect(() => {
-    authTokenManager.updateToken(apiToken);
+    updateToken(apiToken);
   }, [apiToken]);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // 1. Sign in with Better Auth for frontend session management
-      await authClient.signIn.email({
-        email,
-        password,
-        callbackURL: '/dashboard',
-      });
+      await authClient.signIn.email({ email, password, dontRedirect: true });
 
-      // 2. If Better Auth login is successful, get the API token from our backend
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      // Updated URL to match your Swagger /api/auth prefix
+     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password }),
+});
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        // If the backend login fails, we should probably sign out of Better Auth
-        // to keep states in sync.
         await authClient.signOut();
-        throw new Error(errorData.detail || `Backend login failed: ${response.statusText}`);
+        throw new Error(errorData.detail || `Backend login failed`);
       }
 
       const data = await response.json();
-      const { access_token } = data.data;
-
-      // 3. Store the JWT for API calls
-      setApiToken(access_token);
-
+      // FIX: Swagger showed access_token is at data.access_token, not data.data.access_token
+      setApiToken(data.access_token); 
     } catch (error) {
       console.error('Login error:', error);
-      // Ensure we're signed out of Better Auth if any part of the flow fails
-      await authClient.signOut().catch(e => console.error("Failed to sign out during error handling", e));
+      await authClient.signOut().catch(() => {});
       setApiToken(null);
       throw error;
     } finally {
@@ -86,40 +65,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (email: string, password: string, username: string) => {
     setIsLoading(true);
     try {
-      // 1. Sign up with Better Auth for frontend session management
-      await authClient.signUp.email({
-        email,
-        password,
-        name: username,
-        callbackURL: '/dashboard',
+      // 1. Better Auth Sign up
+      await authClient.signUp.email({ 
+        email, 
+        password, 
+        name: username, 
+        callbackURL: '/dashboard' 
       });
 
-      // 2. If Better Auth sign-up is successful, register with our backend to get an API token
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password, username }),
-      });
+      // 2. Python Backend Sign up
+      // URL matching your Swagger: http://localhost:8000/api/auth/register
+     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/register`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password, username }),
+});
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        // If backend registration fails, sign out of Better Auth
+        // If backend fails, we sign out of Better Auth to keep things in sync
         await authClient.signOut();
-        throw new Error(errorData.detail || `Backend registration failed: ${response.statusText}`);
+        throw new Error(errorData.detail?.[0]?.msg || errorData.detail || `Backend registration failed`);
       }
 
       const data = await response.json();
-      const { access_token } = data.data;
-
-      // 3. Store the JWT for API calls
-      setApiToken(access_token);
-
+      // FIX: Match your backend's response structure
+      setApiToken(data.access_token);
     } catch (error) {
       console.error('Registration error:', error);
-      // Ensure we're signed out of Better Auth if any part of the flow fails
-      await authClient.signOut().catch(e => console.error("Failed to sign out during error handling", e));
+      await authClient.signOut().catch(() => {});
       setApiToken(null);
       throw error;
     } finally {
@@ -129,30 +103,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     setIsLoading(true);
-
     try {
-      // Clear API token
       setApiToken(null);
-
-      // Also sign out of Better Auth
-      try {
-        await authClient.signOut();
-      } catch (betterAuthError) {
-        console.warn('Better Auth sign out failed:', betterAuthError);
-      }
+      await authClient.signOut();
     } catch (error) {
       console.error('Logout error:', error);
-      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
   const value = {
-    user: (session?.user && Object.keys(session.user).length > 0) ? session.user : null,
-    token: apiToken, // Only for API calls, not auth state
+    user: session?.user ?? null,
+    token: apiToken,
     isLoading,
-    isAuthenticated: !!session, // ✅ RULE 1: auth state from Better Auth session
+    isAuthenticated: !!session,
     login,
     register,
     logout,
@@ -167,8 +132,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };
