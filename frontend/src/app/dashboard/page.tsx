@@ -5,120 +5,116 @@ import { useAuth } from '../../contexts/BetterAuthContext';
 import { TaskService } from '../../services/tasks';
 import { Task } from '../../lib/types';
 import { Card, Button, TaskCreationSection, TaskList, TaskStats } from '../../components/ui';
-import ProtectedRoute from '../../components/ui/ProtectedRoute';
 
-// Use 'export default' directly on the function to avoid Next.js export errors
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [fetching, setFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Redirect to login if not authenticated (only after loading is complete)
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      window.location.href = '/login';
+    }
+  }, [user, isAuthLoading]);
+
   const loadTasks = async () => {
-    // 1. HARDCODED VALID ID FROM YOUR SWAGGER LOG
-    const validDbId = "c6af33a2-6a1c-433c-8496-47c6f6112b0c";
-
-    setLoading(true);
+    if (!user?.id) return;
+    setFetching(true);
     setError(null);
-
     try {
-      console.log("Testing API connection with Valid UUID:", validDbId);
-      
-      // 2. Fetch tasks for the correct ID
-      const userTasks = await TaskService.getUserTasks(validDbId);
-      
-      console.log("SUCCESS! Tasks from DB:", userTasks);
-      setTasks(userTasks);
+      const userTasks = await TaskService.getUserTasks(user.id);
+      setTasks(userTasks || []);
     } catch (err: any) {
       console.error('Error loading tasks:', err);
-      // This will show if it's 401 (Auth) or 404 (Path)
-      setError(err.response?.data?.detail || err.message);
+      // Check if it's an auth error (401)
+      if (err.response?.status === 401) {
+        console.warn('Session expired, redirecting to login...');
+        localStorage.removeItem('jwt_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user_data');
+        window.location.href = '/login?error=session_expired';
+        return;
+      }
+      setError("Backend unreachable. Check FastAPI.");
     } finally {
-      setLoading(false);
+      setFetching(false);
     }
   };
 
-  // Re-run loadTasks whenever the user object changes (login/logout)
   useEffect(() => {
-    if (user) {
+    if (user?.id) {
       loadTasks();
     }
-  }, [user]);
+  }, [user?.id]);
 
-  const handleTaskCreated = (newTask: Task) => {
-    setTasks(prev => [newTask, ...prev]);
-  };
-
-  const handleTaskUpdated = (updatedTask: Task) => {
-    setTasks(prev => prev.map(task => task.id === updatedTask.id ? updatedTask : task));
-  };
-
-  const handleTaskDeleted = (taskId: string) => {
-    setTasks(prev => prev.filter(task => task.id !== taskId));
-  };
+  if (isAuthLoading) return <div className="p-20 text-center">Checking Session...</div>;
 
   if (!user) {
-    return null; // ProtectedRoute handles redirection to /login
+    return (
+      <div className="flex h-screen flex-col items-center justify-center">
+        <Card className="p-8 text-center shadow-lg">
+          <h2 className="text-xl font-bold mb-4">Not Logged In</h2>
+          <Button onClick={() => window.location.href = '/login'}>Go to Login</Button>
+        </Card>
+      </div>
+    );
   }
 
   return (
-    <ProtectedRoute>
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="container mx-auto px-4">
-          <div className="mb-8">
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4">
+        <div className="mb-8 flex justify-between items-center">
+          <div>
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600">Welcome back, {user.username || 'User'}!</p>
+            <p className="text-blue-600">Account: {user.email}</p>
+          </div>
+          <Button onClick={loadTasks} disabled={fetching}>
+            {fetching ? 'Syncing...' : 'Refresh'}
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <Card className="p-6">
+              <TaskCreationSection
+                userId={user.id}
+                onTaskCreate={(t) => setTasks(prev => [t, ...prev])}
+              />
+            </Card>
+
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Your Tasks</h2>
+              {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
+              
+              {Array.isArray(tasks) ? (
+                <TaskList 
+                  tasks={tasks} 
+                  userId={user.id} 
+                  onTaskUpdated={(u) => setTasks(prev => prev.map(t => t.id === u.id ? u : t))}
+                  onTaskDeleted={(id) => setTasks(prev => prev.filter(t => t.id !== id))}
+                />
+              ) : (
+                <p className="text-gray-400">Initializing tasks...</p>
+              )}
+            </Card>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
-              <Card className="p-6">
-                <TaskCreationSection
-                  userId={user.id}
-                  onTaskCreated={handleTaskCreated}
-                />
-              </Card>
-
-              <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Your Tasks</h2>
-                {loading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-                  </div>
-                ) : error ? (
-                  <div className="text-red-500 text-center py-4">
-                    <p>{error}</p>
-                    <Button onClick={loadTasks} variant="secondary" className="mt-2">
-                      Try Again
-                    </Button>
-                  </div>
-                ) : (
-                  <TaskList
-                    tasks={tasks}
-                    userId={user.id}
-                    onTaskUpdated={handleTaskUpdated}
-                    onTaskDeleted={handleTaskDeleted}
-                  />
-                )}
-              </Card>
-            </div>
-
-            <div className="space-y-6">
-              <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Profile</h2>
-                <div className="space-y-2">
-                  <p><span className="font-medium">Username:</span> {user.username}</p>
-                  <p><span className="font-medium">Email:</span> {user.email}</p>
-                </div>
-              </Card>
-
-              <Card className="p-6">
-                <TaskStats tasks={tasks} />
-              </Card>
-            </div>
+          <div className="space-y-6">
+            <Card className="p-6 bg-slate-900 text-white border-none">
+              <h2 className="text-xs font-bold uppercase text-slate-400 mb-2 tracking-widest">
+                Identity (UUID)
+              </h2>
+              <p className="text-[10px] font-mono break-all">{user.id}</p>
+            </Card>
+            
+            <Card className="p-6">
+              <TaskStats tasks={tasks} />
+            </Card>
           </div>
         </div>
       </div>
-    </ProtectedRoute>
+    </div>
   );
 }

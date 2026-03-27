@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, Field, Relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import UUID, uuid4
 from typing import Optional, List
 import enum
@@ -26,8 +26,8 @@ class User(SQLModel, table=True):
     hashed_password: str = Field(max_length=255, nullable=False)
     is_active: bool = Field(default=True)
     role: UserRole = Field(default=UserRole.USER)
-    created_at: datetime = Field(default=datetime.utcnow())
-    updated_at: datetime = Field(default=datetime.utcnow(), nullable=False)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
 
     # Relationships
     tasks: List["Task"] = Relationship(back_populates="user", cascade_delete=True)
@@ -43,4 +43,4 @@ from sqlalchemy.schema import Table
 @event.listens_for(User, 'before_update')
 def update_updated_at(target: User, conn: Connection, kwargs):
     """Update the updated_at field before any update operation"""
-    target.updated_at = datetime.utcnow()
+    target.updated_at = datetime.now(timezone.utc)

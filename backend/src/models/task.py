@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, Field, Relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import UUID, uuid4
 from typing import Optional
 from .user import User
@@ -19,8 +19,8 @@ class Task(SQLModel, table=True):
     description: Optional[str] = Field(max_length=1000)
     is_completed: bool = Field(default=False)
     user_id: UUID = Field(foreign_key="users.id", nullable=False, index=True)
-    created_at: datetime = Field(default=datetime.utcnow(), index=True)
-    updated_at: datetime = Field(default=datetime.utcnow(), nullable=False)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), index=True)
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
 
     # Relationship to user
     user: User = Relationship(back_populates="tasks")
@@ -33,4 +33,4 @@ from sqlalchemy import event
 @event.listens_for(Task, 'before_update')
 def update_updated_at(target: Task, conn, kwargs):
     """Update the updated_at field before any update operation"""
-    target.updated_at = datetime.utcnow()
+    target.updated_at = datetime.now(timezone.utc)

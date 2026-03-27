@@ -179,3 +179,8 @@ h3 {
 .skip-link:focus {
   top: 6px;
 }
+
+/* Modal open state - prevent background scrolling */
+body.modal-open {
+  overflow: hidden;
+}

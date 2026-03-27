@@ -3,7 +3,7 @@ import { BaseComponentProps, CreateTaskRequest, UpdateTaskRequest, Task } from '
 import FormField from './FormField';
 import Button from '../ui/Button';
 import { CreateTaskSchema, UpdateTaskSchema } from './FormValidation';
-import apiClient from '../../lib/ApiClient';
+import { TaskService } from '../../services/tasks';
 
 export interface TaskFormProps extends BaseComponentProps {
   task?: Task; // If provided, this is an edit form; otherwise, it's a create form
@@ -64,16 +64,20 @@ const TaskForm: React.FC<TaskFormProps> = ({
     }
 
     try {
-      let response;
+      let createdTask;
       if (isEditing && task) {
         // Update existing task
-        response = await apiClient.updateTask(userId, task.id, formData as UpdateTaskRequest);
+        createdTask = await TaskService.updateTask(userId, task.id, {
+          title,
+          description: description || undefined,
+          completed
+        });
       } else {
         // Create new task
-        response = await apiClient.createTask(userId, formData as CreateTaskRequest);
+        createdTask = await TaskService.createTask(userId, title, description || '');
       }
 
-      onSuccess?.(response.data.data);
+      onSuccess?.(createdTask);
     } catch (error: any) {
       const errorMsg = error.message || (isEditing ? 'Failed to update task.' : 'Failed to create task.');
       setErrors({ general: errorMsg });

@@ -19,11 +19,18 @@ export const TaskList: React.FC<TaskListProps> = ({
 }) => {
   const [filter, setFilter] = React.useState<'all' | 'active' | 'completed'>('all');
 
-  const filteredTasks = tasks.filter(task => {
-    if (filter === 'active') return !task.completed;
-    if (filter === 'completed') return task.completed;
-    return true;
-  });
+  // Safe filtering with undefined check
+  const filteredTasks = React.useMemo(() => {
+    if (!tasks || !Array.isArray(tasks)) {
+      return [];
+    }
+    
+    return tasks.filter(task => {
+      if (filter === 'active') return !task.completed;
+      if (filter === 'completed') return task.completed;
+      return true;
+    });
+  }, [tasks, filter]);
 
   return (
     <div className="space-y-4">
@@ -32,13 +39,15 @@ export const TaskList: React.FC<TaskListProps> = ({
         <TaskFilter filter={filter} onFilterChange={setFilter} />
       </div>
 
-      {filteredTasks.length === 0 ? (
+      {!tasks || tasks.length === 0 || filteredTasks.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
-          {filter === 'completed'
-            ? 'No completed tasks yet.'
-            : filter === 'active'
-              ? 'No active tasks. Great job!'
-              : 'No tasks yet. Create your first task!'}
+          {!tasks || tasks.length === 0
+            ? 'No tasks yet. Create your first task!'
+            : filter === 'completed'
+              ? 'No completed tasks yet.'
+              : filter === 'active'
+                ? 'No active tasks. Great job!'
+                : 'No tasks matching your filter.'}
         </div>
       ) : (
         <div className="space-y-3">

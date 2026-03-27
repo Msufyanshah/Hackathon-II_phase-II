@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { BaseComponentProps, Task } from '../../lib/types';
 import { Card, Button, Modal } from '.';
 import TaskForm from '../forms/TaskForm';
-import apiClient from '../../lib/ApiClient';
+import { TaskService } from '../../services/tasks';
 
 export interface TaskItemProps extends BaseComponentProps {
   task: Task;
-  onTaskUpdate: (updatedTask: Task) => void;
-  onTaskDelete: (taskId: string) => void;
+  onTaskUpdate?: (updatedTask: Task) => void;
+  onTaskDelete?: (taskId: string) => void;
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({
@@ -25,8 +25,10 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
     setIsTogglingCompletion(true);
     try {
-      const response = await apiClient.toggleTaskCompletion(task.user_id, task.id, !task.completed);
-      onTaskUpdate(response.data.data);
+      const updatedTask = await TaskService.toggleTaskCompletion(task.user_id, task.id, !task.completed);
+      if (onTaskUpdate) {
+        onTaskUpdate(updatedTask);
+      }
     } catch (error) {
       console.error('Error toggling task completion:', error);
     } finally {
@@ -35,17 +37,38 @@ const TaskItem: React.FC<TaskItemProps> = ({
   };
 
   const handleUpdateTask = (updatedTask: Task) => {
-    onTaskUpdate(updatedTask);
+    if (onTaskUpdate) {
+      onTaskUpdate(updatedTask);
+    } else {
+      console.warn('onTaskUpdate is not available, reloading tasks...');
+      // Fallback: reload the page to show updated task
+      window.location.reload();
+    }
     setIsEditing(false);
   };
 
   const handleDeleteTask = async () => {
     try {
-      await apiClient.deleteTask(task.user_id, task.id);
-      onTaskDelete(task.id);
+      if (!task.user_id) return;
+      await TaskService.deleteTask(task.user_id, task.id);
+      if (onTaskDelete) {
+        onTaskDelete(task.id);
+      } else {
+        console.warn('onTaskDelete not available, reloading page...');
+        window.location.reload();
+      }
       setIsConfirmingDelete(false);
     } catch (error) {
       console.error('Error deleting task:', error);
+      // If task is already deleted (404), still remove it from UI
+      if (error.response?.status === 404) {
+        if (onTaskDelete) {
+          onTaskDelete(task.id);
+        } else {
+          window.location.reload();
+        }
+        setIsConfirmingDelete(false);
+      }
     }
   };
 

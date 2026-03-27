@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlmodel import Session
-from typing import List
+from typing import List, Optional
 from uuid import UUID
+from datetime import datetime
 from ..database.database import get_session_dep as get_session
 from ..database.task_service import TaskService
 from ..database.user_service import UserService
@@ -17,12 +18,30 @@ router = APIRouter()
 async def get_user_tasks(
     user_id: UUID,
     current_user: User = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
+    # Filtering parameters
+    completed: Optional[bool] = Query(None, description="Filter by completion status"),
+    # Sorting parameters
+    sort_by: str = Query("created_at", description="Field to sort by (created_at, updated_at, title, is_completed)"),
+    sort_order: str = Query("desc", description="Sort order (asc or desc)"),
+    # Search parameter
+    search: Optional[str] = Query(None, description="Search in title and description"),
+    # Pagination parameters
+    skip: int = Query(0, ge=0, description="Number of tasks to skip"),
+    limit: int = Query(100, ge=1, le=500, description="Maximum number of tasks to return")
 ):
     """
-    Get all tasks for a specific user
-    Maps to GET /users/{user_id}/tasks from openapi.yaml
+    Get all tasks for a specific user with filtering, sorting, and pagination
+    Maps to GET /api/users/{user_id}/tasks from openapi.yaml
     Enforces user data isolation - users can only access their own tasks
+    
+    Query Parameters:
+    - completed: Filter by completion status (true/false)
+    - sort_by: Field to sort by (created_at, updated_at, title, is_completed)
+    - sort_order: Sort order (asc or desc)
+    - search: Search term for title and description
+    - skip: Number of tasks to skip (for pagination)
+    - limit: Maximum number of tasks to return (default: 100, max: 500)
     """
     # Verify that the requested user ID matches the authenticated user
     if current_user.id != user_id:
@@ -32,7 +51,16 @@ async def get_user_tasks(
         )
 
     task_service = TaskService()
-    tasks = task_service.get_user_tasks(session, user_id)
+    tasks = task_service.get_user_tasks_filtered(
+        session, 
+        user_id,
+        completed=completed,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        search=search,
+        skip=skip,
+        limit=limit
+    )
 
     # Convert to response format
     return [
@@ -58,7 +86,7 @@ async def create_task(
 ):
     """
     Create a new task for a specific user
-    Maps to POST /users/{user_id}/tasks from openapi.yaml
+    Maps to POST /api/users/{user_id}/tasks from openapi.yaml
     Enforces user data isolation - users can only create tasks for themselves
     """
     # Verify that the user ID matches the authenticated user
@@ -96,7 +124,7 @@ async def get_task(
 ):
     """
     Get a specific task for a user
-    Maps to GET /users/{user_id}/tasks/{task_id} from openapi.yaml
+    Maps to GET /api/users/{user_id}/tasks/{task_id} from openapi.yaml
     Enforces user data isolation - users can only access their own tasks
     """
     # Verify that the requested user ID matches the authenticated user
@@ -136,7 +164,7 @@ async def update_task(
 ):
     """
     Update a specific task for a user
-    Maps to PUT /users/{user_id}/tasks/{task_id} from openapi.yaml
+    Maps to PUT /api/users/{user_id}/tasks/{task_id} from openapi.yaml
     Enforces user data isolation - users can only update their own tasks
     """
     # Verify that the user ID matches the authenticated user
@@ -191,7 +219,7 @@ async def update_task_partial(
 ):
     """
     Partially update a specific task for a user (including completion status)
-    Maps to PATCH /users/{user_id}/tasks/{task_id} from openapi.yaml
+    Maps to PATCH /api/users/{user_id}/tasks/{task_id} from openapi.yaml
     Enforces user data isolation - users can only update their own tasks
     """
     # Verify that the user ID matches the authenticated user
@@ -245,7 +273,7 @@ async def delete_task(
 ):
     """
     Delete a specific task for a user
-    Maps to DELETE /users/{user_id}/tasks/{task_id} from openapi.yaml
+    Maps to DELETE /api/users/{user_id}/tasks/{task_id} from openapi.yaml
     Enforces user data isolation - users can only delete their own tasks
     """
     # Verify that the user ID matches the authenticated user
