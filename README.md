@@ -1,78 +1,63 @@
-# Hackathon II - Phase II Todo Application
+# Todo Application Backend API
 
-This is a full-stack todo application developed as part of Hackathon II - Phase II, featuring a Next.js frontend deployed on Vercel and a FastAPI backend deployed on Hugging Face Spaces.
+This is the backend service for the Todo Application, built with FastAPI and deployed on Hugging Face Spaces. The service provides a secure, authenticated API for managing todo tasks with proper user data isolation.
 
-## 🚀 Live Demo
+## Features
 
-[:globe_with_meridians: **View Live Frontend Application**](https://frontend-nvs7el7k7-muhammad-sufyans-projects-fa6b4cf9.vercel.app)
+- FastAPI-based REST API with automatic OpenAPI documentation
+- JWT-based authentication with user data isolation
+- SQLModel ORM with Neon Serverless PostgreSQL
+- Contract-first development following shared API contracts
+- Hugging Face Spaces deployment ready
 
-## 🏗️ Architecture
+## Technologies
 
-- **Frontend**: Next.js 14+ with App Router, deployed on Vercel
-- **Backend**: FastAPI with SQLModel ORM, deployed on Hugging Face Spaces
+- **Framework**: FastAPI
+- **ORM**: SQLModel
 - **Database**: Neon Serverless PostgreSQL
-- **Authentication**: JWT-based with user data isolation
+- **Authentication**: JWT tokens with PyJWT
+- **Deployment**: Hugging Face Spaces
 
-## 🎯 Features
+## Setup
 
-- User authentication (Login/Register)
-- Secure todo management (Create, Read, Update, Delete)
-- Task completion tracking
-- User data isolation
-- Responsive design for all device sizes
-- Modern UI with accessibility features
-- API contract compliance
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## 🛠️ Tech Stack
+2. Set up environment variables:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
 
-- **Frontend**: Next.js, React, TypeScript
-- **Backend**: FastAPI, SQLModel, Pydantic
-- **Styling**: Tailwind CSS
-- **UI Components**: Custom-built component library
-- **Deployment**: Vercel (Frontend), Hugging Face Spaces (Backend)
-- **Database**: Neon Serverless PostgreSQL
+3. Run the development server:
+   ```bash
+   uvicorn src.main:app --reload
+   ```
 
-## 📋 Project Structure
+## API Documentation
 
-```
-backend/                 # FastAPI backend service
-├── src/
-│   ├── api/             # API route handlers
-│   ├── models/          # SQLModel database models
-│   ├── database/        # Database services and session management
-│   ├── schemas/         # Pydantic request/response schemas
-│   ├── utils/           # Utility functions (security, password hashing)
-│   └── core/            # Core configuration
-frontend/                # Next.js frontend application
-├── src/
-│   ├── app/             # App Router pages
-│   ├── components/      # Reusable UI components
-│   ├── contexts/        # React Context providers
-│   ├── lib/             # Utilities and type definitions
-│   └── styles/          # Global styles
-specs/                   # Project specifications
-├── 001-phase-ii-overview/ # Feature specifications
-├── 002-backend-api/     # Backend API specifications
-└── contracts/           # API contracts (openapi.yaml)
-```
+Once running, API documentation is available at:
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
 
-## 🚀 Quick Start
+## Deployment
 
-### Backend Setup
-1. Navigate to the backend directory: `cd backend`
-2. Install dependencies: `pip install -r requirements.txt`
-3. Set up environment variables: `cp .env.example .env` and edit with your configuration
-4. Run the development server: `uvicorn src.main:app --reload`
+The application is designed for deployment on Hugging Face Spaces. Simply push the code to a Space repository with the required environment variables configured.
 
-### Frontend Setup
-1. Navigate to the frontend directory: `cd frontend`
-2. Install dependencies: `npm install`
-3. Run the development server: `npm run dev`
+## Architecture
 
-## 🤝 Contributing
+The backend follows a clean architecture with distinct layers:
+- **Domain Models**: SQLModel entities representing business objects
+- **API Handlers**: FastAPI route handlers implementing contract endpoints
+- **Persistence Logic**: Database services managing CRUD operations
+- **Authentication Verification**: JWT validation and authorization services
 
-This project was developed using Claude Code for AI-assisted development following Spec-Driven Development principles.
+## Contributing
 
-## 📄 License
-
-This project is part of the Hackathon II competition.
+This project follows constitutional requirements for spec-driven development. All changes must:
+- Follow contract-first principles
+- Maintain user data isolation
+- Pass automated contract compliance tests
+- Follow established architectural patterns
