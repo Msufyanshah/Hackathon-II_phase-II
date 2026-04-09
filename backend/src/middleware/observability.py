@@ -2,13 +2,15 @@
 Middleware for request logging and metrics collection
 Provides observability for API requests
 """
+import logging
 import time
 import uuid
 from typing import Callable
+
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
-import logging
-from ..utils.logging_config import get_logger, CorrelationIdFilter
+
+from ..utils.logging_config import CorrelationIdFilter, get_logger
 
 logger = get_logger(__name__)
 

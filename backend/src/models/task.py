@@ -1,7 +1,9 @@
-from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime, timezone
-from uuid import UUID, uuid4
 from typing import Optional
+from uuid import UUID, uuid4
+
+from sqlmodel import Field, Relationship, SQLModel
+
 from .user import User
 
 

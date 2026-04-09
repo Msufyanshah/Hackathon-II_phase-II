@@ -1,12 +1,13 @@
 """
 Tests for security utilities
 """
-import pytest
 from datetime import datetime, timedelta, timezone
+
+import pytest
 from jose import jwt
 
-from src.utils.security import create_access_token, verify_token
 from src.core.config import settings
+from src.utils.security import create_access_token, verify_token
 
 
 class TestCreateAccessToken:

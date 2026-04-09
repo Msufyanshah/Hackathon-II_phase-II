@@ -1,9 +1,11 @@
-from sqlmodel import Session, select
+from datetime import datetime, timedelta
 from typing import Optional
 from uuid import UUID
-from datetime import datetime, timedelta
-from ..models.auth_token import AuthToken
+
 from passlib.context import CryptContext
+from sqlmodel import Session, select
+
+from ..models.auth_token import AuthToken
 
 
 class AuthTokenService:

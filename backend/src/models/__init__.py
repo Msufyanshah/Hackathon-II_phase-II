@@ -4,8 +4,8 @@ Following constitutional requirements using SQLModel as the single authoritative
 with UUID primary keys for security and scalability.
 """
 
-from .user import User
-from .task import Task
 from .auth_token import AuthToken
+from .task import Task
+from .user import User
 
 __all__ = ["User", "Task", "AuthToken"]

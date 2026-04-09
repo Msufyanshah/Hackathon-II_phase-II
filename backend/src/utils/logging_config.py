@@ -2,11 +2,11 @@
 Logging configuration for the application
 Provides structured logging with correlation IDs for request tracking
 """
+import json
 import logging
 import sys
 from datetime import datetime
 from typing import Any, Dict
-import json
 
 
 class StructuredFormatter(logging.Formatter):

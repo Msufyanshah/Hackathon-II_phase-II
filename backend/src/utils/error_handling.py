@@ -2,13 +2,14 @@
 Centralized error handling and exception classes
 Provides consistent error responses across the API
 """
-from fastapi import HTTPException, status, Request
-from fastapi.responses import JSONResponse
-from fastapi.exceptions import RequestValidationError
-from pydantic import ValidationError
-from typing import Any, Dict, Optional
 import logging
 from datetime import datetime
+from typing import Any, Dict, Optional
+
+from fastapi import HTTPException, Request, status
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from pydantic import ValidationError
 
 logger = logging.getLogger(__name__)
 

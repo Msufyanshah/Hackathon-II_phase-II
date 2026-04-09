@@ -1,9 +1,11 @@
-from sqlmodel import Session, select, col
+from datetime import datetime, timezone
 from typing import List, Optional
 from uuid import UUID
+
+from sqlmodel import Session, col, select
+
 from ..models.task import Task
 from ..models.user import User
-from datetime import datetime, timezone
 
 
 class TaskService:

@@ -1,10 +1,12 @@
-from sqlmodel import Session, select
+from datetime import datetime
 from typing import Optional
 from uuid import UUID
-from ..models.user import User
-from ..models.auth_token import AuthToken
+
 from passlib.context import CryptContext
-from datetime import datetime
+from sqlmodel import Session, select
+
+from ..models.auth_token import AuthToken
+from ..models.user import User
 
 
 class UserService:

@@ -1,10 +1,11 @@
 """
 Tests for task endpoints
 """
+from uuid import uuid4
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
-from uuid import uuid4
 
 
 class TestTaskCreation:
@@ -90,10 +91,10 @@ class TestTaskReading:
         self, client: TestClient, auth_headers: dict, session: Session
     ):
         """Test that users cannot access other users' tasks"""
-        from src.models.user import User
         from src.models.task import Task
+        from src.models.user import User
         from src.utils.security import get_password_hash
-        
+
         # Create another user
         other_user = User(
             email="other@example.com",

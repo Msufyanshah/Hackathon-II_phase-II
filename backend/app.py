@@ -2,6 +2,7 @@
 # This file enables deployment to Hugging Face Spaces
 
 import os
+
 from src.main import app
 
 # This is the entry point for Hugging Face Spaces

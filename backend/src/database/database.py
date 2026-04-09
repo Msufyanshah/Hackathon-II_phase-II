@@ -1,9 +1,11 @@
-from sqlmodel import create_engine, Session, SQLModel
-from contextlib import contextmanager
-from typing import Generator
-from ..core.config import settings
 import os
 import sys
+from contextlib import contextmanager
+from typing import Generator
+
+from sqlmodel import Session, SQLModel, create_engine
+
+from ..core.config import settings
 
 # Create database engine
 # For local development with SQLite, we need to handle the path correctly
@@ -20,9 +22,9 @@ def create_db_and_tables():
     """Create database tables based on SQLModel models"""
     try:
         # Import models to ensure they're registered with SQLModel before creating tables
-        from ..models.user import User
-        from ..models.task import Task
         from ..models.auth_token import AuthToken
+        from ..models.task import Task
+        from ..models.user import User
 
         # Create all tables
         SQLModel.metadata.create_all(engine)

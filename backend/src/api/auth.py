@@ -1,35 +1,27 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
-from fastapi.security import HTTPBearer
-from sqlmodel import Session, select
-from typing import Dict
 from datetime import timedelta
+from typing import Dict
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.security import HTTPBearer
 from slowapi import Limiter
 from slowapi.util import get_remote_address
+from sqlmodel import Session, select
+
+from ..database.auth_token_service import AuthTokenService
 from ..database.database import get_session_dep as get_session
 from ..database.user_service import UserService
-from ..database.auth_token_service import AuthTokenService
 from ..models.user import User
-from ..utils.security import (
-    create_access_token,
-    create_refresh_token,
-    refresh_access_token,
-    create_password_reset_token,
-    verify_password_reset_token,
-    get_current_user
-)
-from ..utils.password import verify_password, get_password_hash
-from ..schemas.auth_schemas import (
-    UserRegistrationRequest,
-    UserLoginRequest,
-    LoginResponse,
-    UserResponse,
-    RefreshTokenRequest,
-    RefreshTokenResponse,
-    PasswordResetRequest,
-    PasswordResetConfirmRequest,
-    PasswordChangeRequest
-)
-from uuid import UUID
+from ..schemas.auth_schemas import (LoginResponse, PasswordChangeRequest,
+                                    PasswordResetConfirmRequest,
+                                    PasswordResetRequest, RefreshTokenRequest,
+                                    RefreshTokenResponse, UserLoginRequest,
+                                    UserRegistrationRequest, UserResponse)
+from ..utils.password import get_password_hash, verify_password
+from ..utils.security import (create_access_token, create_password_reset_token,
+                              create_refresh_token, get_current_user,
+                              refresh_access_token,
+                              verify_password_reset_token)
 
 # Rate limiter for auth endpoints (stricter limits)
 limiter = Limiter(key_func=get_remote_address)

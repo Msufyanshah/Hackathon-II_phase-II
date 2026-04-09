@@ -1,16 +1,17 @@
 """
 Pytest configuration and fixtures for backend tests
 """
+from typing import Generator
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
-from typing import Generator
 
-from src.main import app
 from src.database.database import get_session_dep
-from src.models.user import User
+from src.main import app
 from src.models.task import Task
+from src.models.user import User
 from src.utils.password import get_password_hash
 
 

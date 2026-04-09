@@ -1,10 +1,12 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
-from uuid import UUID
+
 from ..database.database import get_session_dep as get_session
 from ..models.user import User
-from ..utils.security import get_current_user
 from ..schemas.auth_schemas import UserResponse
+from ..utils.security import get_current_user
 
 router = APIRouter()
 

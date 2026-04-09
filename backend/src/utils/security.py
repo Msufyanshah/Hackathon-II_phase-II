@@ -1,15 +1,16 @@
+import json
 from datetime import datetime, timedelta, timezone
 from typing import Optional
-from jose import JWTError, jwt
+from uuid import UUID
+
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from jose import JWTError, jwt
 from sqlmodel import Session, select
+
+from ..core.config import settings
 from ..database.database import get_session_dep as get_session
 from ..models.user import User
-from ..core.config import settings
-from uuid import UUID
-import json
-
 
 security = HTTPBearer()
 

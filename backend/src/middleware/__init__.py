@@ -1,6 +1,6 @@
 """
 Middleware package for the Todo Application API
 """
-from .observability import RequestLoggingMiddleware, MetricsMiddleware
+from .observability import MetricsMiddleware, RequestLoggingMiddleware
 
 __all__ = ["RequestLoggingMiddleware", "MetricsMiddleware"]
