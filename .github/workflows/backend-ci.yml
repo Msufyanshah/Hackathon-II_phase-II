@@ -31,12 +31,12 @@ jobs:
         run: |
           cd backend
           pip install -r requirements.txt
-          pip install black isort flake8 mypy
+          pip install black isort==5.13.2 flake8 mypy
 
       - name: Lint with isort
         run: |
           cd backend
-          isort --check-only --profile black src/
+          isort --check-only src/
       
       - name: Lint with Black
         run: |
