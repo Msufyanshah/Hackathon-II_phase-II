@@ -12,16 +12,26 @@ from ..database.auth_token_service import AuthTokenService
 from ..database.database import get_session_dep as get_session
 from ..database.user_service import UserService
 from ..models.user import User
-from ..schemas.auth_schemas import (LoginResponse, PasswordChangeRequest,
-                                    PasswordResetConfirmRequest,
-                                    PasswordResetRequest, RefreshTokenRequest,
-                                    RefreshTokenResponse, UserLoginRequest,
-                                    UserRegistrationRequest, UserResponse)
+from ..schemas.auth_schemas import (
+    LoginResponse,
+    PasswordChangeRequest,
+    PasswordResetConfirmRequest,
+    PasswordResetRequest,
+    RefreshTokenRequest,
+    RefreshTokenResponse,
+    UserLoginRequest,
+    UserRegistrationRequest,
+    UserResponse,
+)
 from ..utils.password import get_password_hash, verify_password
-from ..utils.security import (create_access_token, create_password_reset_token,
-                              create_refresh_token, get_current_user,
-                              refresh_access_token,
-                              verify_password_reset_token)
+from ..utils.security import (
+    create_access_token,
+    create_password_reset_token,
+    create_refresh_token,
+    get_current_user,
+    refresh_access_token,
+    verify_password_reset_token,
+)
 
 # Rate limiter for auth endpoints (stricter limits)
 limiter = Limiter(key_func=get_remote_address)

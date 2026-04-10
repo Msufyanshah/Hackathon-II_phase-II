@@ -10,8 +10,7 @@ from ..database.task_service import TaskService
 from ..database.user_service import UserService
 from ..models.task import Task
 from ..models.user import User
-from ..schemas.task_schemas import (CreateTaskRequest, TaskResponse,
-                                    UpdateTaskRequest)
+from ..schemas.task_schemas import CreateTaskRequest, TaskResponse, UpdateTaskRequest
 from ..utils.security import get_current_user
 
 router = APIRouter()

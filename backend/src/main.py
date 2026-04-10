@@ -9,8 +9,7 @@ from slowapi.util import get_remote_address
 from .api import router as api_router
 from .core.config import settings
 from .database.database import create_db_and_tables
-from .middleware.observability import (MetricsMiddleware,
-                                       RequestLoggingMiddleware)
+from .middleware.observability import MetricsMiddleware, RequestLoggingMiddleware
 from .utils.error_handling import register_exception_handlers
 from .utils.logging_config import get_logger, setup_logging
 
