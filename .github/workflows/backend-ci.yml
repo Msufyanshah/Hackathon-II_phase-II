@@ -36,7 +36,7 @@ jobs:
       - name: Lint with isort
         run: |
           cd backend
-          isort --check-only src/
+          isort --check-only --settings-file .isort.cfg src/
 
       - name: Lint with Black
         run: |
