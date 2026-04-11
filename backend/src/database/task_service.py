@@ -22,19 +22,19 @@ class TaskService:
         return session.exec(statement).all()
 
     def get_user_tasks_filtered(
-        self, 
-        session: Session, 
+        self,
+        session: Session,
         user_id: UUID,
         completed: Optional[bool] = None,
         sort_by: str = "created_at",
         sort_order: str = "desc",
         search: Optional[str] = None,
         skip: int = 0,
-        limit: int = 100
+        limit: int = 100,
     ) -> List[Task]:
         """
         Get tasks for a user with filtering, sorting, and pagination support
-        
+
         Args:
             session: Database session
             user_id: UUID of the user
@@ -47,18 +47,19 @@ class TaskService:
         """
         # Build base query
         statement = select(Task).where(Task.user_id == user_id)
-        
+
         # Apply completion filter
         if completed is not None:
             statement = statement.where(Task.is_completed == completed)
-        
+
         # Apply search filter
         if search:
             search_pattern = f"%{search}%"
             statement = statement.where(
-                (Task.title.ilike(search_pattern)) | (Task.description.ilike(search_pattern))
+                (Task.title.ilike(search_pattern))
+                | (Task.description.ilike(search_pattern))
             )
-        
+
         # Apply sorting
         valid_sort_fields = {
             "created_at": Task.created_at,
@@ -66,35 +67,39 @@ class TaskService:
             "title": Task.title,
             "is_completed": Task.is_completed,
         }
-        
+
         sort_field = valid_sort_fields.get(sort_by, Task.created_at)
-        
+
         if sort_order.lower() == "asc":
             statement = statement.order_by(col(sort_field).asc())
         else:
             statement = statement.order_by(col(sort_field).desc())
-        
+
         # Apply pagination
         statement = statement.offset(skip).limit(limit)
-        
+
         return session.exec(statement).all()
 
-    def get_task_by_id(self, session: Session, task_id: UUID, user_id: UUID) -> Optional[Task]:
+    def get_task_by_id(
+        self, session: Session, task_id: UUID, user_id: UUID
+    ) -> Optional[Task]:
         """
         Get a specific task by ID for a specific user (enforcing user isolation)
         """
         statement = select(Task).where(Task.id == task_id, Task.user_id == user_id)
         return session.exec(statement).first()
 
-    def create_task(self, session: Session, user_id: UUID, title: str, description: Optional[str] = None) -> Task:
+    def create_task(
+        self,
+        session: Session,
+        user_id: UUID,
+        title: str,
+        description: Optional[str] = None,
+    ) -> Task:
         """
         Create a new task for a specific user
         """
-        task = Task(
-            title=title,
-            description=description,
-            user_id=user_id
-        )
+        task = Task(title=title, description=description, user_id=user_id)
 
         session.add(task)
         session.commit()
@@ -102,7 +107,9 @@ class TaskService:
 
         return task
 
-    def update_task(self, session: Session, task_id: UUID, user_id: UUID, **kwargs) -> Optional[Task]:
+    def update_task(
+        self, session: Session, task_id: UUID, user_id: UUID, **kwargs
+    ) -> Optional[Task]:
         """
         Update a task for a specific user (enforcing user isolation)
         """
@@ -121,7 +128,9 @@ class TaskService:
 
         return task
 
-    def toggle_task_completion(self, session: Session, task_id: UUID, user_id: UUID, completed: bool) -> Optional[Task]:
+    def toggle_task_completion(
+        self, session: Session, task_id: UUID, user_id: UUID, completed: bool
+    ) -> Optional[Task]:
         """
         Toggle task completion status for a specific user's task (enforcing user isolation)
         """

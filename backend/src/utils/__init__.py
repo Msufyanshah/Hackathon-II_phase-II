@@ -10,5 +10,5 @@ __all__ = [
     "verify_token",
     "get_current_user",
     "get_password_hash",
-    "verify_password"
+    "verify_password",
 ]

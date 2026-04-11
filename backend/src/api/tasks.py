@@ -24,19 +24,24 @@ async def get_user_tasks(
     # Filtering parameters
     completed: Optional[bool] = Query(None, description="Filter by completion status"),
     # Sorting parameters
-    sort_by: str = Query("created_at", description="Field to sort by (created_at, updated_at, title, is_completed)"),
+    sort_by: str = Query(
+        "created_at",
+        description="Field to sort by (created_at, updated_at, title, is_completed)",
+    ),
     sort_order: str = Query("desc", description="Sort order (asc or desc)"),
     # Search parameter
     search: Optional[str] = Query(None, description="Search in title and description"),
     # Pagination parameters
     skip: int = Query(0, ge=0, description="Number of tasks to skip"),
-    limit: int = Query(100, ge=1, le=500, description="Maximum number of tasks to return")
+    limit: int = Query(
+        100, ge=1, le=500, description="Maximum number of tasks to return"
+    ),
 ):
     """
     Get all tasks for a specific user with filtering, sorting, and pagination
     Maps to GET /api/users/{user_id}/tasks from openapi.yaml
     Enforces user data isolation - users can only access their own tasks
-    
+
     Query Parameters:
     - completed: Filter by completion status (true/false)
     - sort_by: Field to sort by (created_at, updated_at, title, is_completed)
@@ -49,19 +54,19 @@ async def get_user_tasks(
     if current_user.id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to access tasks for this user"
+            detail="Not authorized to access tasks for this user",
         )
 
     task_service = TaskService()
     tasks = task_service.get_user_tasks_filtered(
-        session, 
+        session,
         user_id,
         completed=completed,
         sort_by=sort_by,
         sort_order=sort_order,
         search=search,
         skip=skip,
-        limit=limit
+        limit=limit,
     )
 
     # Convert to response format
@@ -73,7 +78,7 @@ async def get_user_tasks(
             completed=task.is_completed,
             user_id=task.user_id,
             created_at=task.created_at,
-            updated_at=task.updated_at
+            updated_at=task.updated_at,
         )
         for task in tasks
     ]
@@ -84,7 +89,7 @@ async def create_task(
     user_id: UUID,
     task_data: CreateTaskRequest,
     current_user: User = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     """
     Create a new task for a specific user
@@ -95,7 +100,7 @@ async def create_task(
     if current_user.id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to create tasks for this user"
+            detail="Not authorized to create tasks for this user",
         )
 
     task_service = TaskService()
@@ -103,7 +108,7 @@ async def create_task(
         session=session,
         user_id=user_id,
         title=task_data.title,
-        description=task_data.description
+        description=task_data.description,
     )
 
     return TaskResponse(
@@ -113,7 +118,7 @@ async def create_task(
         completed=task.is_completed,
         user_id=task.user_id,
         created_at=task.created_at,
-        updated_at=task.updated_at
+        updated_at=task.updated_at,
     )
 
 
@@ -122,7 +127,7 @@ async def get_task(
     user_id: UUID,
     task_id: UUID,
     current_user: User = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     """
     Get a specific task for a user
@@ -133,7 +138,7 @@ async def get_task(
     if current_user.id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to access tasks for this user"
+            detail="Not authorized to access tasks for this user",
         )
 
     task_service = TaskService()
@@ -141,8 +146,7 @@ async def get_task(
 
     if not task:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Task not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
         )
 
     return TaskResponse(
@@ -152,7 +156,7 @@ async def get_task(
         completed=task.is_completed,
         user_id=task.user_id,
         created_at=task.created_at,
-        updated_at=task.updated_at
+        updated_at=task.updated_at,
     )
 
 
@@ -162,7 +166,7 @@ async def update_task(
     task_id: UUID,
     task_data: UpdateTaskRequest,
     current_user: User = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     """
     Update a specific task for a user
@@ -173,7 +177,7 @@ async def update_task(
     if current_user.id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to update tasks for this user"
+            detail="Not authorized to update tasks for this user",
         )
 
     task_service = TaskService()
@@ -181,23 +185,19 @@ async def update_task(
     # Prepare update data
     update_data = {}
     if task_data.title is not None:
-        update_data['title'] = task_data.title
+        update_data["title"] = task_data.title
     if task_data.description is not None:
-        update_data['description'] = task_data.description
+        update_data["description"] = task_data.description
     if task_data.completed is not None:
-        update_data['is_completed'] = task_data.completed
+        update_data["is_completed"] = task_data.completed
 
     task = task_service.update_task(
-        session=session,
-        task_id=task_id,
-        user_id=user_id,
-        **update_data
+        session=session, task_id=task_id, user_id=user_id, **update_data
     )
 
     if not task:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Task not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
         )
 
     return TaskResponse(
@@ -207,7 +207,7 @@ async def update_task(
         completed=task.is_completed,
         user_id=task.user_id,
         created_at=task.created_at,
-        updated_at=task.updated_at
+        updated_at=task.updated_at,
     )
 
 
@@ -217,7 +217,7 @@ async def update_task_partial(
     task_id: UUID,
     task_data: UpdateTaskRequest,
     current_user: User = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     """
     Partially update a specific task for a user (including completion status)
@@ -228,7 +228,7 @@ async def update_task_partial(
     if current_user.id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to update tasks for this user"
+            detail="Not authorized to update tasks for this user",
         )
 
     task_service = TaskService()
@@ -236,23 +236,19 @@ async def update_task_partial(
     # Prepare update data
     update_data = {}
     if task_data.title is not None:
-        update_data['title'] = task_data.title
+        update_data["title"] = task_data.title
     if task_data.description is not None:
-        update_data['description'] = task_data.description
+        update_data["description"] = task_data.description
     if task_data.completed is not None:
-        update_data['is_completed'] = task_data.completed
+        update_data["is_completed"] = task_data.completed
 
     task = task_service.update_task(
-        session=session,
-        task_id=task_id,
-        user_id=user_id,
-        **update_data
+        session=session, task_id=task_id, user_id=user_id, **update_data
     )
 
     if not task:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Task not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
         )
 
     return TaskResponse(
@@ -262,7 +258,7 @@ async def update_task_partial(
         completed=task.is_completed,
         user_id=task.user_id,
         created_at=task.created_at,
-        updated_at=task.updated_at
+        updated_at=task.updated_at,
     )
 
 
@@ -271,7 +267,7 @@ async def delete_task(
     user_id: UUID,
     task_id: UUID,
     current_user: User = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     """
     Delete a specific task for a user
@@ -282,7 +278,7 @@ async def delete_task(
     if current_user.id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to delete tasks for this user"
+            detail="Not authorized to delete tasks for this user",
         )
 
     task_service = TaskService()
@@ -290,8 +286,7 @@ async def delete_task(
 
     if not success:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Task not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
         )
 
     return {"message": "Task deleted successfully"}

@@ -25,10 +25,14 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = datetime.now(timezone.utc) + timedelta(
+            minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+        )
 
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    encoded_jwt = jwt.encode(
+        to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
+    )
     return encoded_jwt
 
 
@@ -42,10 +46,14 @@ def create_refresh_token(data: dict, expires_delta: Optional[timedelta] = None) 
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+        expire = datetime.now(timezone.utc) + timedelta(
+            days=settings.REFRESH_TOKEN_EXPIRE_DAYS
+        )
 
     to_encode.update({"exp": expire, "type": "refresh"})
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    encoded_jwt = jwt.encode(
+        to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
+    )
     return encoded_jwt
 
 
@@ -58,9 +66,11 @@ def create_password_reset_token(user_id: str, email: str) -> str:
         "sub": user_id,
         "email": email,
         "type": "password_reset",
-        "exp": datetime.now(timezone.utc) + timedelta(hours=1)
+        "exp": datetime.now(timezone.utc) + timedelta(hours=1),
     }
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    encoded_jwt = jwt.encode(
+        to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
+    )
     return encoded_jwt
 
 
@@ -70,12 +80,14 @@ def verify_password_reset_token(token: str) -> Optional[dict]:
     Returns payload if valid, None if invalid or expired
     """
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
+
         # Verify this is a password reset token
         if payload.get("type") != "password_reset":
             return None
-        
+
         return payload
     except JWTError:
         return None
@@ -86,7 +98,9 @@ def verify_token(token: str) -> Optional[dict]:
     Verify JWT token and return payload if valid
     """
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
         return payload
     except JWTError:
         return None
@@ -98,12 +112,14 @@ def verify_refresh_token(token: str) -> Optional[dict]:
     Checks token type and expiration
     """
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
+
         # Verify this is a refresh token
         if payload.get("type") != "refresh":
             return None
-        
+
         return payload
     except JWTError:
         return None
@@ -117,11 +133,11 @@ def refresh_access_token(refresh_token: str) -> Optional[str]:
     payload = verify_refresh_token(refresh_token)
     if payload is None:
         return None
-    
+
     user_id: str = payload.get("sub")
     if user_id is None:
         return None
-    
+
     # Create new access token with standard expiration
     new_access_token = create_access_token(data={"sub": user_id})
     return new_access_token
@@ -129,7 +145,7 @@ def refresh_access_token(refresh_token: str) -> Optional[str]:
 
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     """
     Get current authenticated user from JWT token
@@ -143,7 +159,9 @@ def get_current_user(
 
     try:
         payload = jwt.decode(
-            credentials.credentials, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+            credentials.credentials,
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM],
         )
         user_id: str = payload.get("sub")
         if user_id is None:
@@ -159,8 +177,7 @@ def get_current_user(
 
     if not user.is_active:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Inactive user"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Inactive user"
         )
 
     return user

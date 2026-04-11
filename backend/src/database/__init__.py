@@ -14,5 +14,5 @@ __all__ = [
     "get_session",
     "UserService",
     "TaskService",
-    "AuthTokenService"
+    "AuthTokenService",
 ]

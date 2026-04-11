@@ -45,7 +45,7 @@ security = HTTPBearer()
 async def register_user(
     request: Request,
     user_data: UserRegistrationRequest,
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     """
     Register a new user account
@@ -59,15 +59,14 @@ async def register_user(
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="User with this email already exists"
+            detail="User with this email already exists",
         )
 
     # Check if username is taken
     existing_username = user_service.get_user_by_username(session, user_data.username)
     if existing_username:
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Username already taken"
+            status_code=status.HTTP_409_CONFLICT, detail="Username already taken"
         )
 
     # Create new user
@@ -75,7 +74,7 @@ async def register_user(
         session=session,
         email=user_data.email,
         username=user_data.username,
-        password=user_data.password
+        password=user_data.password,
     )
 
     # Create access token and refresh token
@@ -86,17 +85,14 @@ async def register_user(
     refresh_token = create_refresh_token(data={"sub": str(user.id)})
 
     user_response = UserResponse(
-        id=user.id,
-        email=user.email,
-        username=user.username,
-        created_at=user.created_at
+        id=user.id, email=user.email, username=user.username, created_at=user.created_at
     )
 
     return LoginResponse(
         access_token=access_token,
         refresh_token=refresh_token,
         token_type="bearer",
-        user=user_response
+        user=user_response,
     )
 
 
@@ -105,7 +101,7 @@ async def register_user(
 async def login_user(
     request: Request,
     login_data: UserLoginRequest,
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     """
     Authenticate user and return JWT token
@@ -116,9 +112,7 @@ async def login_user(
 
     # Authenticate user
     user = user_service.authenticate_user(
-        session=session,
-        email=login_data.email,
-        password=login_data.password
+        session=session, email=login_data.email, password=login_data.password
     )
 
     if not user:
@@ -136,17 +130,14 @@ async def login_user(
     refresh_token = create_refresh_token(data={"sub": str(user.id)})
 
     user_response = UserResponse(
-        id=user.id,
-        email=user.email,
-        username=user.username,
-        created_at=user.created_at
+        id=user.id, email=user.email, username=user.username, created_at=user.created_at
     )
 
     return LoginResponse(
         access_token=access_token,
         refresh_token=refresh_token,
         token_type="bearer",
-        user=user_response
+        user=user_response,
     )
 
 
@@ -155,7 +146,7 @@ async def login_user(
 async def refresh_token(
     request: Request,
     token_data: RefreshTokenRequest,
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     """
     Refresh access token using refresh token
@@ -172,10 +163,7 @@ async def refresh_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    return RefreshTokenResponse(
-        access_token=new_access_token,
-        token_type="bearer"
-    )
+    return RefreshTokenResponse(access_token=new_access_token, token_type="bearer")
 
 
 @router.post("/password-reset/request")
@@ -183,34 +171,34 @@ async def refresh_token(
 async def request_password_reset(
     request: Request,
     reset_data: PasswordResetRequest,
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     """
     Request password reset email
     Maps to POST /auth/password-reset/request from openapi.yaml
     Rate limited to 3 requests per minute to prevent email enumeration
-    
+
     Note: In production, this would send an email with the reset link.
     For now, we return the token directly (development mode).
     """
     user_service = UserService()
-    
+
     # Find user by email
     user = user_service.get_user_by_email(session, reset_data.email)
-    
+
     # Always return success to prevent email enumeration
     if user is None:
         return {"message": "If the email exists, a reset link has been sent"}
-    
+
     # Create password reset token
     reset_token = create_password_reset_token(str(user.id), user.email)
-    
+
     # In production: Send email with reset link containing token
     # For development: Return token in response
     return {
         "message": "Password reset token generated",
         "reset_token": reset_token,  # Remove this in production
-        "note": "In production, this token would be sent via email"
+        "note": "In production, this token would be sent via email",
     }
 
 
@@ -219,7 +207,7 @@ async def request_password_reset(
 async def confirm_password_reset(
     request: Request,
     confirm_data: PasswordResetConfirmRequest,
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     """
     Confirm password reset with token
@@ -228,43 +216,43 @@ async def confirm_password_reset(
     """
     # Verify reset token
     payload = verify_password_reset_token(confirm_data.token)
-    
+
     if payload is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired reset token",
         )
-    
+
     user_id = payload.get("sub")
     email = payload.get("email")
-    
+
     if not user_id or not email:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid reset token payload",
         )
-    
+
     # Get user from database
     user_service = UserService()
     user = user_service.get_user_by_id(session, UUID(user_id))
-    
+
     if user is None or user.email != email:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid reset token",
         )
-    
+
     if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Inactive user account",
         )
-    
+
     # Update password
     user.hashed_password = get_password_hash(confirm_data.new_password)
     session.add(user)
     session.commit()
-    
+
     return {"message": "Password has been reset successfully"}
 
 
@@ -274,7 +262,7 @@ async def change_password(
     request: Request,
     change_data: PasswordChangeRequest,
     current_user: User = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     """
     Change password for authenticated user
@@ -288,10 +276,10 @@ async def change_password(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Current password is incorrect",
         )
-    
+
     # Update password
     current_user.hashed_password = get_password_hash(change_data.new_password)
     session.add(current_user)
     session.commit()
-    
+
     return {"message": "Password has been changed successfully"}

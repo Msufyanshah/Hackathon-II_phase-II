@@ -12,7 +12,9 @@ from ..core.config import settings
 if settings.DATABASE_URL.startswith("sqlite"):
     # For SQLite, use relative path or absolute path
     database_url = settings.DATABASE_URL.replace("sqlite:///", "sqlite:///./")
-    engine = create_engine(database_url, echo=False, connect_args={"check_same_thread": False})
+    engine = create_engine(
+        database_url, echo=False, connect_args={"check_same_thread": False}
+    )
 else:
     # For PostgreSQL (Neon), use the provided URL
     engine = create_engine(settings.DATABASE_URL, echo=False)

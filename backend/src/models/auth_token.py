@@ -15,6 +15,7 @@ class AuthToken(SQLModel, table=True):
     This model is used exclusively for refresh token revocation tracking. Access tokens remain
     stateless JWTs as required by constitutional requirements.
     """
+
     __tablename__ = "auth_tokens"
 
     id: UUID = Field(default_factory=uuid4, primary_key=True, nullable=False)

@@ -2,6 +2,7 @@
 Logging configuration for the application
 Provides structured logging with correlation IDs for request tracking
 """
+
 import json
 import logging
 import sys
@@ -39,18 +40,38 @@ class StructuredFormatter(logging.Formatter):
             log_data["exception"] = {
                 "type": record.exc_info[0].__name__ if record.exc_info[0] else None,
                 "message": str(record.exc_info[1]) if record.exc_info[1] else None,
-                "traceback": self.formatException(record.exc_info) if record.exc_info else None,
+                "traceback": (
+                    self.formatException(record.exc_info) if record.exc_info else None
+                ),
             }
 
         # Add extra fields
         if self.include_extras:
             for key, value in record.__dict__.items():
                 if key not in [
-                    "name", "msg", "args", "created", "filename", "funcName",
-                    "levelname", "levelno", "lineno", "module", "msecs",
-                    "pathname", "process", "processName", "relativeCreated",
-                    "stack_info", "exc_info", "exc_text", "thread", "threadName",
-                    "message", "correlation_id", "taskName"
+                    "name",
+                    "msg",
+                    "args",
+                    "created",
+                    "filename",
+                    "funcName",
+                    "levelname",
+                    "levelno",
+                    "lineno",
+                    "module",
+                    "msecs",
+                    "pathname",
+                    "process",
+                    "processName",
+                    "relativeCreated",
+                    "stack_info",
+                    "exc_info",
+                    "exc_text",
+                    "thread",
+                    "threadName",
+                    "message",
+                    "correlation_id",
+                    "taskName",
                 ]:
                     try:
                         json.dumps(value)  # Check if JSON serializable
@@ -86,9 +107,7 @@ class ConsoleFormatter(logging.Formatter):
 
 
 def setup_logging(
-    level: str = "INFO",
-    structured: bool = False,
-    log_file: str = None
+    level: str = "INFO", structured: bool = False, log_file: str = None
 ) -> logging.Logger:
     """
     Configure application logging

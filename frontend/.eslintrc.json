@@ -1,5 +1,14 @@
 {
   "extends": ["next/core-web-vitals", "eslint:recommended"],
+  "ignorePatterns": [
+    "node_modules/",
+    ".next/",
+    "out/",
+    "check-db.js",
+    "test-auth-flow.js",
+    "*.config.js",
+    "*.config.ts"
+  ],
   "rules": {
     "no-console": "warn",
     "no-unused-vars": "error",

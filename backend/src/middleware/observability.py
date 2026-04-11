@@ -2,6 +2,7 @@
 Middleware for request logging and metrics collection
 Provides observability for API requests
 """
+
 import logging
 import time
 import uuid
@@ -23,14 +24,14 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         # Generate correlation ID
         correlation_id = str(uuid.uuid4())
-        
+
         # Add correlation ID to request headers
         request.state.correlation_id = correlation_id
-        
+
         # Add correlation ID filter to logger
         correlation_filter = CorrelationIdFilter(correlation_id)
         logger.addFilter(correlation_filter)
-        
+
         # Log request
         client_host = request.client.host if request.client else "unknown"
         logger.info(
@@ -43,13 +44,13 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
                 "correlation_id": correlation_id,
             },
         )
-        
+
         # Process request and measure time
         start_time = time.time()
         try:
             response = await call_next(request)
             process_time = time.time() - start_time
-            
+
             # Log response
             logger.info(
                 f"Request completed: {request.method} {request.url.path} - {response.status_code}",
@@ -61,11 +62,11 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
                     "correlation_id": correlation_id,
                 },
             )
-            
+
             # Add timing header to response
             response.headers["X-Process-Time"] = str(round(process_time * 1000, 2))
             response.headers["X-Correlation-ID"] = correlation_id
-            
+
             return response
         except Exception as e:
             process_time = time.time() - start_time
@@ -104,37 +105,37 @@ class MetricsMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         start_time = time.time()
-        
+
         try:
             response = await call_next(request)
-            
+
             # Update metrics
             self.metrics["requests_total"] += 1
-            
+
             # Track by method
             method = request.method
             self.metrics["requests_by_method"][method] = (
                 self.metrics["requests_by_method"].get(method, 0) + 1
             )
-            
+
             # Track by status code
             status_code = response.status_code
             self.metrics["requests_by_status"][str(status_code)] = (
                 self.metrics["requests_by_status"].get(str(status_code), 0) + 1
             )
-            
+
             # Track response time
             process_time = time.time() - start_time
             self.metrics["response_times"].append(process_time * 1000)
-            
+
             # Keep only last 1000 response times
             if len(self.metrics["response_times"]) > 1000:
                 self.metrics["response_times"] = self.metrics["response_times"][-1000:]
-            
+
             # Track errors
             if status_code >= 400:
                 self.metrics["errors_total"] += 1
-            
+
             return response
         except Exception as e:
             self.metrics["errors_total"] += 1
@@ -143,7 +144,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
     def get_metrics(self) -> dict:
         """Get current metrics snapshot"""
         response_times = self.metrics["response_times"]
-        
+
         # Calculate percentiles
         if response_times:
             sorted_times = sorted(response_times)
@@ -153,7 +154,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
             avg = sum(response_times) / len(response_times)
         else:
             p50 = p95 = p99 = avg = 0
-        
+
         return {
             "requests": {
                 "total": self.metrics["requests_total"],
@@ -170,7 +171,12 @@ class MetricsMiddleware(BaseHTTPMiddleware):
             "errors": {
                 "total": self.metrics["errors_total"],
                 "rate": round(
-                    (self.metrics["errors_total"] / max(self.metrics["requests_total"], 1)) * 100, 2
+                    (
+                        self.metrics["errors_total"]
+                        / max(self.metrics["requests_total"], 1)
+                    )
+                    * 100,
+                    2,
                 ),
             },
         }

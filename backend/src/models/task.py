@@ -14,6 +14,7 @@ class Task(SQLModel, table=True):
 
     Follows constitutional requirements with UUID primary keys for security and scalability.
     """
+
     __tablename__ = "tasks"
 
     id: UUID = Field(default_factory=uuid4, primary_key=True, nullable=False)
@@ -21,8 +22,12 @@ class Task(SQLModel, table=True):
     description: Optional[str] = Field(max_length=1000)
     is_completed: bool = Field(default=False)
     user_id: UUID = Field(foreign_key="users.id", nullable=False, index=True)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), index=True)
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), index=True
+    )
+    updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), nullable=False
+    )
 
     # Relationship to user
     user: User = Relationship(back_populates="tasks")
@@ -32,7 +37,7 @@ class Task(SQLModel, table=True):
 from sqlalchemy import event
 
 
-@event.listens_for(Task, 'before_update')
+@event.listens_for(Task, "before_update")
 def update_updated_at(target: Task, conn, kwargs):
     """Update the updated_at field before any update operation"""
     target.updated_at = datetime.now(timezone.utc)

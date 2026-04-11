@@ -12,5 +12,5 @@ __all__ = [
     "LoginResponse",
     "CreateTaskRequest",
     "UpdateTaskRequest",
-    "TaskResponse"
+    "TaskResponse",
 ]

@@ -8,6 +8,7 @@ from sqlmodel import Field, Relationship, SQLModel
 
 class UserRole(str, enum.Enum):
     """User roles for permission management"""
+
     USER = "user"
     ADMIN = "admin"
 
@@ -19,6 +20,7 @@ class User(SQLModel, table=True):
 
     Follows constitutional requirements with UUID primary keys for security and scalability.
     """
+
     __tablename__ = "users"
 
     id: UUID = Field(default_factory=uuid4, primary_key=True, nullable=False)
@@ -28,11 +30,15 @@ class User(SQLModel, table=True):
     is_active: bool = Field(default=True)
     role: UserRole = Field(default=UserRole.USER)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), nullable=False
+    )
 
     # Relationships
     tasks: List["Task"] = Relationship(back_populates="user", cascade_delete=True)
-    auth_tokens: List["AuthToken"] = Relationship(back_populates="user", cascade_delete=True)
+    auth_tokens: List["AuthToken"] = Relationship(
+        back_populates="user", cascade_delete=True
+    )
 
 
 # Update the model to use the correct datetime behavior
@@ -41,7 +47,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.schema import Table
 
 
-@event.listens_for(User, 'before_update')
+@event.listens_for(User, "before_update")
 def update_updated_at(target: User, conn: Connection, kwargs):
     """Update the updated_at field before any update operation"""
     target.updated_at = datetime.now(timezone.utc)

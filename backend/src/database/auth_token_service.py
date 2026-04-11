@@ -17,7 +17,13 @@ class AuthTokenService:
     def __init__(self):
         self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-    def create_auth_token(self, session: Session, user_id: UUID, token: str, expires_delta: Optional[timedelta] = None) -> AuthToken:
+    def create_auth_token(
+        self,
+        session: Session,
+        user_id: UUID,
+        token: str,
+        expires_delta: Optional[timedelta] = None,
+    ) -> AuthToken:
         """
         Create an auth token record for refresh token management
         """
@@ -30,9 +36,7 @@ class AuthTokenService:
         token_hash = self.pwd_context.hash(token)
 
         auth_token = AuthToken(
-            user_id=user_id,
-            token_hash=token_hash,
-            expires_at=expires_at
+            user_id=user_id, token_hash=token_hash, expires_at=expires_at
         )
 
         session.add(auth_token)
@@ -41,14 +45,16 @@ class AuthTokenService:
 
         return auth_token
 
-    def get_valid_token(self, session: Session, token: str, user_id: UUID) -> Optional[AuthToken]:
+    def get_valid_token(
+        self, session: Session, token: str, user_id: UUID
+    ) -> Optional[AuthToken]:
         """
         Get a valid, non-revoked, non-expired token for a specific user
         """
         statement = select(AuthToken).where(
             AuthToken.user_id == user_id,
             AuthToken.expires_at > datetime.utcnow(),
-            AuthToken.is_revoked == False
+            AuthToken.is_revoked == False,
         )
         tokens = session.exec(statement).all()
 
@@ -78,8 +84,7 @@ class AuthTokenService:
         Revoke all tokens for a specific user (used when deactivating account)
         """
         statement = select(AuthToken).where(
-            AuthToken.user_id == user_id,
-            AuthToken.is_revoked == False
+            AuthToken.user_id == user_id, AuthToken.is_revoked == False
         )
         tokens = session.exec(statement).all()
 

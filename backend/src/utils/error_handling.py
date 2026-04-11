@@ -2,6 +2,7 @@
 Centralized error handling and exception classes
 Provides consistent error responses across the API
 """
+
 import logging
 from datetime import datetime
 from typing import Any, Dict, Optional
@@ -92,7 +93,9 @@ class BadRequestException(AppException):
 class ValidationException(AppException):
     """Data validation exception"""
 
-    def __init__(self, detail: str = "Validation failed", errors: Optional[list] = None):
+    def __init__(
+        self, detail: str = "Validation failed", errors: Optional[list] = None
+    ):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=detail,
@@ -147,11 +150,13 @@ async def validation_exception_handler(
     """
     errors = []
     for error in exc.errors():
-        errors.append({
-            "field": ".".join(str(x) for x in error["loc"]),
-            "message": error["msg"],
-            "type": error["type"],
-        })
+        errors.append(
+            {
+                "field": ".".join(str(x) for x in error["loc"]),
+                "message": error["msg"],
+                "type": error["type"],
+            }
+        )
 
     logger.warning(
         f"Validation error: {errors}",

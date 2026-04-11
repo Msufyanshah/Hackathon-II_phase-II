@@ -12,9 +12,7 @@ router = APIRouter()
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_current_user_profile(
-    current_user: User = Depends(get_current_user)
-):
+async def get_current_user_profile(current_user: User = Depends(get_current_user)):
     """
     Get the current authenticated user's profile
     Maps to GET /users/me from openapi.yaml
@@ -23,7 +21,7 @@ async def get_current_user_profile(
         id=current_user.id,
         email=current_user.email,
         username=current_user.username,
-        created_at=current_user.created_at
+        created_at=current_user.created_at,
     )
 
 
@@ -32,7 +30,7 @@ async def update_user_profile(
     user_id: UUID,
     # In a real implementation, we'd have an update request schema here
     current_user: User = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     """
     Update user profile information
@@ -42,7 +40,7 @@ async def update_user_profile(
     if current_user.id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to update this user"
+            detail="Not authorized to update this user",
         )
 
     # In a real implementation, we would update user fields here
@@ -51,5 +49,5 @@ async def update_user_profile(
         id=current_user.id,
         email=current_user.email,
         username=current_user.username,
-        created_at=current_user.created_at
+        created_at=current_user.created_at,
     )

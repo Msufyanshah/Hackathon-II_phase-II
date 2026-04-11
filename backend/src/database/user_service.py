@@ -18,7 +18,9 @@ class UserService:
     def __init__(self):
         self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-    def create_user(self, session: Session, email: str, username: str, password: str) -> User:
+    def create_user(
+        self, session: Session, email: str, username: str, password: str
+    ) -> User:
         """
         Create a new user with hashed password
         """
@@ -26,11 +28,7 @@ class UserService:
 
         hashed_password = get_password_hash(password)
 
-        user = User(
-            email=email,
-            username=username,
-            hashed_password=hashed_password
-        )
+        user = User(email=email, username=username, hashed_password=hashed_password)
 
         session.add(user)
         session.commit()
@@ -59,7 +57,9 @@ class UserService:
         statement = select(User).where(User.id == user_id)
         return session.exec(statement).first()
 
-    def authenticate_user(self, session: Session, email: str, password: str) -> Optional[User]:
+    def authenticate_user(
+        self, session: Session, email: str, password: str
+    ) -> Optional[User]:
         """
         Authenticate user with email and password
         """
