@@ -4,7 +4,7 @@ Following constitutional requirements with SQLModel as the single authoritative 
 """
 
 from .auth_token_service import AuthTokenService
-from .database import create_db_and_tables, engine, get_session
+from .database import create_db_and_tables, engine, get_session, get_session_dep
 from .task_service import TaskService
 from .user_service import UserService
 
@@ -12,6 +12,7 @@ __all__ = [
     "engine",
     "create_db_and_tables",
     "get_session",
+    "get_session_dep",
     "UserService",
     "TaskService",
     "AuthTokenService",

@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
+from typing import Any, Dict
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -27,8 +28,17 @@ def rate_limiter():
 
 limiter = rate_limiter()
 
+
+# Rate limit exception handler wrapper
+async def rate_limit_exceeded_handler(request: Request, exc: Exception) -> Response:
+    """Wrapper to handle RateLimitExceeded exceptions with proper type signature."""
+    if isinstance(exc, RateLimitExceeded):
+        return _rate_limit_exceeded_handler(request, exc)
+    raise exc
+
+
 # Global metrics instance
-metrics_middleware = None
+metrics_middleware = None  # Will be initialized in lifespan event
 
 
 @asynccontextmanager
@@ -59,7 +69,7 @@ app = FastAPI(
 
 # Add rate limiter to app state
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
 
 # Register exception handlers
 register_exception_handlers(app)
@@ -102,16 +112,14 @@ async def health_check():
 
 
 @app.get("/metrics")
-async def get_metrics():
+async def get_metrics() -> Dict[str, Any]:
     """
     Metrics endpoint for monitoring
     Returns request counts, response times, and error rates
     """
-    # Get metrics from the last middleware instance
-    if hasattr(app, "user_middleware") and app.user_middleware:
-        for middleware in app.user_middleware:
-            if isinstance(middleware.cls, MetricsMiddleware):
-                return {"metrics": middleware.cls(None).get_metrics()}
+    # Get metrics from the global metrics middleware instance
+    if metrics_middleware is not None:
+        return {"metrics": metrics_middleware.get_metrics()}
 
     # Fallback: return empty metrics
     return {

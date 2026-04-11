@@ -108,18 +108,35 @@ class TaskService:
         return task
 
     def update_task(
-        self, session: Session, task_id: UUID, user_id: UUID, **kwargs
+        self,
+        session: Session,
+        task_id: UUID,
+        user_id: UUID,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        is_completed: Optional[bool] = None,
     ) -> Optional[Task]:
         """
         Update a task for a specific user (enforcing user isolation)
+
+        Args:
+            session: Database session
+            task_id: UUID of the task to update
+            user_id: UUID of the task owner (for isolation enforcement)
+            title: New task title (optional)
+            description: New task description (optional)
+            is_completed: New completion status (optional)
         """
         task = self.get_task_by_id(session, task_id, user_id)
         if not task:
             return None
 
-        for field, value in kwargs.items():
-            if hasattr(task, field):
-                setattr(task, field, value)
+        if title is not None:
+            task.title = title
+        if description is not None:
+            task.description = description
+        if is_completed is not None:
+            task.is_completed = is_completed
 
         task.updated_at = datetime.now(timezone.utc)
         session.add(task)

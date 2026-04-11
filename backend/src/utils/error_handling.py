@@ -4,10 +4,10 @@ Provides consistent error responses across the API
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
-from fastapi import HTTPException, Request, status
+from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
@@ -94,7 +94,9 @@ class ValidationException(AppException):
     """Data validation exception"""
 
     def __init__(
-        self, detail: str = "Validation failed", errors: Optional[list] = None
+        self,
+        detail: str = "Validation failed",
+        errors: Optional[list[Dict[str, Any]]] = None,
     ):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -115,27 +117,31 @@ class DatabaseException(AppException):
         )
 
 
-async def app_exception_handler(request: Request, exc: AppException) -> JSONResponse:
+async def app_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """
     Handle application exceptions with consistent error response format
     """
+    app_exc = exc if isinstance(exc, AppException) else None
+    if not app_exc:
+        return await generic_exception_handler(request, exc)
+
     logger.error(
-        f"Application error: {exc.error_code} - {exc.detail}",
+        f"Application error: {app_exc.error_code} - {app_exc.detail}",
         extra={
             "path": request.url.path,
             "method": request.method,
-            "status_code": exc.status_code,
+            "status_code": app_exc.status_code,
         },
     )
 
     return JSONResponse(
-        status_code=exc.status_code,
+        status_code=app_exc.status_code,
         content={
             "error": {
-                "code": exc.error_code,
-                "message": exc.detail,
-                "status": exc.status_code,
-                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "code": app_exc.error_code,
+                "message": app_exc.detail,
+                "status": app_exc.status_code,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "path": request.url.path,
             }
         },
@@ -143,20 +149,22 @@ async def app_exception_handler(request: Request, exc: AppException) -> JSONResp
 
 
 async def validation_exception_handler(
-    request: Request, exc: RequestValidationError
+    request: Request, exc: Exception
 ) -> JSONResponse:
     """
     Handle request validation exceptions with detailed error information
     """
-    errors = []
-    for error in exc.errors():
-        errors.append(
-            {
-                "field": ".".join(str(x) for x in error["loc"]),
-                "message": error["msg"],
-                "type": error["type"],
-            }
-        )
+    errors: list[Dict[str, Any]] = []
+    if isinstance(exc, (RequestValidationError, ValidationError)):
+        errors_list = exc.errors() if hasattr(exc, "errors") else []
+        for error in errors_list:
+            errors.append(
+                {
+                    "field": ".".join(str(x) for x in error["loc"]),
+                    "message": error["msg"],
+                    "type": error["type"],
+                }
+            )
 
     logger.warning(
         f"Validation error: {errors}",
@@ -173,7 +181,7 @@ async def validation_exception_handler(
                 "code": "VALIDATION_ERROR",
                 "message": "Request validation failed",
                 "status": status.HTTP_422_UNPROCESSABLE_ENTITY,
-                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "path": request.url.path,
                 "details": errors,
             }
@@ -200,14 +208,14 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
                 "code": "INTERNAL_ERROR",
                 "message": "An unexpected error occurred",
                 "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "path": request.url.path,
             }
         },
     )
 
 
-def register_exception_handlers(app):
+def register_exception_handlers(app: FastAPI) -> None:
     """
     Register all exception handlers with the FastAPI app
     """

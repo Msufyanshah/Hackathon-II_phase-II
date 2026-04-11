@@ -226,18 +226,13 @@ async def update_task_partial(
 
     task_service = TaskService()
 
-    # Prepare update data - extract optional fields with defaults
-    title = task_data.title if task_data.title is not None else None
-    description = task_data.description if task_data.description is not None else None
-    is_completed = task_data.completed if task_data.completed is not None else None
-
     task = task_service.update_task(
         session=session,
         task_id=task_id,
         user_id=user_id,
-        title=title,
-        description=description,
-        is_completed=is_completed,
+        title=task_data.title,
+        description=task_data.description,
+        is_completed=task_data.completed,
     )
 
     if not task:
