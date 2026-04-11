@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 
@@ -6,6 +7,8 @@ from sqlmodel import Session
 
 from ..database.database import get_session_dep as get_session
 from ..database.task_service import TaskService
+from ..database.user_service import UserService
+from ..models.task import Task
 from ..models.user import User
 from ..schemas.task_schemas import CreateTaskRequest, TaskResponse, UpdateTaskRequest
 from ..utils.security import get_current_user
