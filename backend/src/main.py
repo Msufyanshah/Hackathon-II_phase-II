@@ -37,16 +37,11 @@ async def rate_limit_exceeded_handler(request: Request, exc: Exception) -> Respo
     raise exc
 
 
-# Global metrics instance
-metrics_middleware = None  # Will be initialized in lifespan event
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
     Lifespan event handler to initialize database tables on startup
     """
-    global metrics_middleware
     logger.info("Starting up Todo Application API...")
     # Initialize database tables
     create_db_and_tables()

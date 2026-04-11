@@ -7,6 +7,7 @@ from sqlmodel import Session, select
 
 from ..models.auth_token import AuthToken
 from ..models.user import User
+from .auth_token_service import AuthTokenService
 
 
 class UserService:

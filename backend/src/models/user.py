@@ -1,9 +1,13 @@
 import enum
 from datetime import datetime, timezone
-from typing import List, Optional
+from typing import TYPE_CHECKING, List
 from uuid import UUID, uuid4
 
 from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from .auth_token import AuthToken
+    from .task import Task
 
 
 class UserRole(str, enum.Enum):
