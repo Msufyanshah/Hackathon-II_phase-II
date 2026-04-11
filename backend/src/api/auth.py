@@ -1,14 +1,12 @@
 from datetime import timedelta
-from typing import Dict
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import HTTPBearer
 from slowapi import Limiter
 from slowapi.util import get_remote_address
-from sqlmodel import Session, select
+from sqlmodel import Session
 
-from ..database.auth_token_service import AuthTokenService
 from ..database.database import get_session_dep as get_session
 from ..database.user_service import UserService
 from ..models.user import User
