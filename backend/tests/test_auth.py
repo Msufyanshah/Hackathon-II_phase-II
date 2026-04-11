@@ -1,6 +1,7 @@
 """
 Tests for authentication endpoints
 """
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
@@ -53,7 +54,7 @@ class TestUserRegistration:
 
     def test_register_user_weak_password(self, client: TestClient):
         """Test registration with weak password
-        
+
         Note: Currently backend doesn't validate password strength.
         This test documents expected future behavior.
         """
@@ -104,13 +105,13 @@ class TestUserLogin:
 
     def test_login_inactive_user(self, client: TestClient, session: Session):
         """Test login with inactive user
-        
+
         Note: Currently backend doesn't check is_active flag during authentication.
         This test documents expected future behavior.
         """
         from src.models.user import User
         from src.utils.password import get_password_hash
-        
+
         user = User(
             email="inactive@example.com",
             username="inactiveuser",
@@ -119,7 +120,7 @@ class TestUserLogin:
         )
         session.add(user)
         session.commit()
-        
+
         response = client.post(
             "/api/auth/login",
             json={"email": "inactive@example.com", "password": "password123"},

@@ -1,6 +1,7 @@
 """
 Pytest configuration and fixtures for backend tests
 """
+
 from typing import Generator
 
 import pytest
@@ -24,21 +25,21 @@ def session_fixture() -> Generator[Session, None, None]:
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-    
+
     # Create all tables
     SQLModel.metadata.create_all(engine)
-    
+
     # Create session
     session = Session(engine)
-    
+
     # Override dependency
     def get_session_override():
         return session
-    
+
     app.dependency_overrides[get_session_dep] = get_session_override
-    
+
     yield session
-    
+
     # Cleanup
     session.close()
     app.dependency_overrides.clear()
@@ -83,16 +84,8 @@ def test_task(session: Session, test_user: User) -> Task:
 @pytest.fixture
 def auth_headers(client: TestClient, test_user: User, session: Session) -> dict:
     """Get authentication headers for test user"""
-    # Disable rate limiting for tests
-    app.state.limiter.enabled = False
-    
-    response = client.post(
-        "/api/auth/login",
-        json={"email": "test@example.com", "password": "testpassword123"},
-    )
-    
-    # Re-enable rate limiting
-    app.state.limiter.enabled = True
-    
-    token = response.json()["access_token"]
+    # Generate token directly instead of going through rate-limited login
+    from src.utils.security import create_access_token
+
+    token = create_access_token(data={"sub": str(test_user.id)})
     return {"Authorization": f"Bearer {token}"}

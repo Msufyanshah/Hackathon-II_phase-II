@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlmodel import Session
 
 from ..database.database import get_session_dep as get_session
@@ -211,7 +211,7 @@ async def update_task(
 async def update_task_partial(
     user_id: UUID,
     task_id: UUID,
-    task_data: UpdateTaskRequest,
+    task_data: Optional[UpdateTaskRequest] = None,
     current_user: User = Depends(get_current_user),
     session: Session = Depends(get_session),
 ):
@@ -219,6 +219,8 @@ async def update_task_partial(
     Partially update a specific task for a user (including completion status)
     Maps to PATCH /api/users/{user_id}/tasks/{task_id} from openapi.yaml
     Enforces user data isolation - users can only update their own tasks
+
+    If no body is sent, toggles task completion status.
     """
     # Verify that the user ID matches the authenticated user
     if current_user.id != user_id:
@@ -229,14 +231,29 @@ async def update_task_partial(
 
     task_service = TaskService()
 
-    task = task_service.update_task(
-        session=session,
-        task_id=task_id,
-        user_id=user_id,
-        title=task_data.title,
-        description=task_data.description,
-        is_completed=task_data.completed,
-    )
+    # If no update data provided, toggle completion
+    if task_data is None:
+        current_task = task_service.get_task_by_id(session, task_id, user_id)
+        if not current_task:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Task not found",
+            )
+        task = task_service.toggle_task_completion(
+            session=session,
+            task_id=task_id,
+            user_id=user_id,
+            completed=not current_task.is_completed,
+        )
+    else:
+        task = task_service.update_task(
+            session=session,
+            task_id=task_id,
+            user_id=user_id,
+            title=task_data.title,
+            description=task_data.description,
+            is_completed=task_data.completed,
+        )
 
     if not task:
         raise HTTPException(
@@ -254,7 +271,7 @@ async def update_task_partial(
     )
 
 
-@router.delete("/{user_id}/tasks/{task_id}")
+@router.delete("/{user_id}/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_task(
     user_id: UUID,
     task_id: UUID,
@@ -281,4 +298,4 @@ async def delete_task(
             status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
         )
 
-    return {"message": "Task deleted successfully"}
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

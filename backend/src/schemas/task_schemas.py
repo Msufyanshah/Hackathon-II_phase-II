@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class CreateTaskRequest(BaseModel):
@@ -11,8 +11,8 @@ class CreateTaskRequest(BaseModel):
     Matching schema from openapi.yaml
     """
 
-    title: str
-    description: Optional[str] = None
+    title: str = Field(min_length=1, max_length=200)
+    description: Optional[str] = Field(default=None, max_length=1000)
     completed: Optional[bool] = False
 
 
