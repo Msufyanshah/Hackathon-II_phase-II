@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 
@@ -7,8 +6,6 @@ from sqlmodel import Session
 
 from ..database.database import get_session_dep as get_session
 from ..database.task_service import TaskService
-from ..database.user_service import UserService
-from ..models.task import Task
 from ..models.user import User
 from ..schemas.task_schemas import CreateTaskRequest, TaskResponse, UpdateTaskRequest
 from ..utils.security import get_current_user
@@ -182,17 +179,13 @@ async def update_task(
 
     task_service = TaskService()
 
-    # Prepare update data
-    update_data = {}
-    if task_data.title is not None:
-        update_data["title"] = task_data.title
-    if task_data.description is not None:
-        update_data["description"] = task_data.description
-    if task_data.completed is not None:
-        update_data["is_completed"] = task_data.completed
-
     task = task_service.update_task(
-        session=session, task_id=task_id, user_id=user_id, **update_data
+        session=session,
+        task_id=task_id,
+        user_id=user_id,
+        title=task_data.title,
+        description=task_data.description,
+        is_completed=task_data.completed,
     )
 
     if not task:
@@ -233,17 +226,18 @@ async def update_task_partial(
 
     task_service = TaskService()
 
-    # Prepare update data
-    update_data = {}
-    if task_data.title is not None:
-        update_data["title"] = task_data.title
-    if task_data.description is not None:
-        update_data["description"] = task_data.description
-    if task_data.completed is not None:
-        update_data["is_completed"] = task_data.completed
+    # Prepare update data - extract optional fields with defaults
+    title = task_data.title if task_data.title is not None else None
+    description = task_data.description if task_data.description is not None else None
+    is_completed = task_data.completed if task_data.completed is not None else None
 
     task = task_service.update_task(
-        session=session, task_id=task_id, user_id=user_id, **update_data
+        session=session,
+        task_id=task_id,
+        user_id=user_id,
+        title=title,
+        description=description,
+        is_completed=is_completed,
     )
 
     if not task:
