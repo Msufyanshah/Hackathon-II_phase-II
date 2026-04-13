@@ -6,28 +6,32 @@ export class TaskService {
    * Rule 2: Backend validates JWT and UUID
    * Fetching tasks is a pure GET (No body allowed)
    */
-   static async getUserTasks(userId: string): Promise<Task[]> {
-  try {
-    const url = `/api/users/${userId}/tasks`;
-    console.log("Full API Request URL:", url); // CHECK THIS IN CONSOLE
-    const response = await apiClient.get(url);
-    return response.data?.data || response.data || [];
-  } catch (error: any) {
-    // This will now tell us EXACTLY what the backend is complaining about
-    console.error('TaskService Detail:', error.response?.status, error.response?.data);
-    throw error;
+  static async getUserTasks(
+    userId: string,
+    params?: { search?: string; completed?: boolean; sort_by?: string; sort_order?: string }
+  ): Promise<Task[]> {
+    try {
+      const url = `/api/users/${userId}/tasks`;
+      const response = await apiClient.get(url, { params });
+      return response.data?.data || response.data || [];
+    } catch (error: any) {
+      console.error('TaskService Detail:', error.response?.status, error.response?.data);
+      throw error;
+    }
   }
-}
 
   /**
    * Creating tasks uses POST with a data body
    */
-  static async createTask(userId: string, title: string, description: string): Promise<Task> {
+  static async createTask(
+    userId: string,
+    data: { title: string; description?: string }
+  ): Promise<Task> {
     try {
       const response = await apiClient.post(`/api/users/${userId}/tasks`, {
-        title,
-        description,
-        completed: false
+        title: data.title,
+        description: data.description,
+        completed: false,
       });
       return response.data?.data || response.data;
     } catch (error: any) {
