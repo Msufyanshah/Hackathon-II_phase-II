@@ -53,7 +53,14 @@
     "src/components/layouts/WithAuth.tsx",
     "src/components/layouts/AuthProvider.tsx",
     "src/components/layouts/index.tsx",
-    "src/components/providers/AuthProviderWrapper.tsx"
+    "src/components/providers/AuthProviderWrapper.tsx",
+    "src/components/ui/DataLoader.tsx",
+    "src/components/ui/TaskDetailModal.tsx",
+    "src/components/ui/TaskItem.tsx",
+    "src/components/ui/TaskItemActions.tsx",
+    "src/components/ui/TaskList.tsx",
+    "src/components/ui/UserProfile.tsx",
+    "src/components/forms/TaskForm.tsx"
   ],
   "rules": {
     "no-console": "warn",

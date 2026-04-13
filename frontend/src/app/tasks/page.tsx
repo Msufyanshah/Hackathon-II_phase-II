@@ -12,16 +12,7 @@ import GradientButton from '@/components/ui/GradientButton'
 import Modal from '@/components/ui/Modal'
 import { useAuth } from '@/contexts/BetterAuthContext'
 import { TaskService } from '@/services/tasks'
-
-interface Task {
-  id: string
-  title: string
-  description: string | null
-  completed: boolean
-  user_id: string
-  created_at: string
-  updated_at: string
-}
+import { Task } from '@/lib/types'
 
 type FilterTab = 'all' | 'active' | 'completed'
 type SortOption = 'newest' | 'oldest' | 'a-z' | 'completed'
@@ -98,11 +89,12 @@ export default function TasksPage() {
         description: editDesc.trim() || undefined,
         completed: editingTask.completed,
       })
-      setTasks((prev) =>
-        prev.map((t) =>
-          t.id === editingTask.id ? { ...t, title: editTitle.trim(), description: editDesc.trim() || null } : t
-        )
-      )
+      const updated: Task = {
+        ...editingTask,
+        title: editTitle.trim(),
+        description: editDesc.trim() || null,
+      }
+      setTasks((prev) => prev.map((t) => (t.id === editingTask.id ? updated : t)))
       setEditingTask(null)
       toast.success('Task updated')
     } catch {

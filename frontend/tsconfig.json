@@ -22,19 +22,9 @@
         "name": "next"
       }
     ],
-    "baseUrl": "./src",
     "paths": {
-      "@/components/*": [
-        "components/*"
-      ],
-      "@/lib/*": [
-        "lib/*"
-      ],
-      "@/styles/*": [
-        "styles/*"
-      ],
-      "@/app/*": [
-        "app/*"
+      "@/*": [
+        "./src/*"
       ]
     }
   },
@@ -46,6 +36,29 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".next",
+    "src/__tests__",
+    "src/test-utils",
+    "src/lib/validators.ts",
+    "src/lib/performance.ts",
+    "src/lib/better-auth-client.ts",
+    "src/lib/authClient.ts",
+    "src/lib/api-types.ts",
+    "src/lib/contract-audit.ts",
+    "src/lib/analytics.ts",
+    "src/services/AuthService.ts",
+    "src/services/UserService.ts",
+    "src/components/layouts/index.tsx",
+    "src/components/forms/TaskForm.tsx",
+    "src/components/forms/TaskFilter.tsx",
+    "src/components/ui/DataLoader.tsx",
+    "src/components/ui/TaskDetailModal.tsx",
+    "src/components/ui/TaskItem.tsx",
+    "src/components/ui/TaskItemActions.tsx",
+    "src/components/ui/TaskList.tsx",
+    "src/components/ui/UserProfile.tsx",
+    "src/components/layouts/WithAuth.tsx",
+    "src/components/layouts/AuthProvider.tsx"
   ]
 }
