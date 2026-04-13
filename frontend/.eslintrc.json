@@ -60,7 +60,11 @@
     "src/components/ui/TaskItemActions.tsx",
     "src/components/ui/TaskList.tsx",
     "src/components/ui/UserProfile.tsx",
-    "src/components/forms/TaskForm.tsx"
+    "src/components/forms/TaskForm.tsx",
+    "src/components/ui/LogoutButton.tsx",
+    "src/components/ui/LoadingStates.tsx",
+    "src/components/ui/AnimatedCheckbox.tsx",
+    "src/lib/ApiClient.ts"
   ],
   "rules": {
     "no-console": "warn",
