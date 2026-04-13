@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { Lock, User, Mail } from 'lucide-react'
 import toast from 'react-hot-toast'
 import GlassCard from '@/components/ui/GlassCard'

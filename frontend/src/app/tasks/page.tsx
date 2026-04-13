@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Search, SlidersHorizontal, SortAsc, SortDesc, Edit2, Trash2 } from 'lucide-react'
+import { Search, Edit2, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import GlassCard from '@/components/ui/GlassCard'
 import AnimatedCheckbox from '@/components/ui/AnimatedCheckbox'
@@ -10,7 +10,6 @@ import EmptyState from '@/components/ui/EmptyState'
 import GlassInput from '@/components/ui/GlassInput'
 import GradientButton from '@/components/ui/GradientButton'
 import Modal from '@/components/ui/Modal'
-import GlassInput from '@/components/ui/GlassInput'
 import { useAuth } from '@/contexts/BetterAuthContext'
 import { TaskService } from '@/services/tasks'
 
