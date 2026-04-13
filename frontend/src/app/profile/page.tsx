@@ -151,7 +151,7 @@ export default function ProfilePage() {
             <div className="flex justify-between">
               <span className="text-text-secondary">Member since</span>
               <span className="text-text-muted">
-                {new Date(user.created_at).toLocaleDateString('en-US', {
+                {new Date(user.created_at ?? '').toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',

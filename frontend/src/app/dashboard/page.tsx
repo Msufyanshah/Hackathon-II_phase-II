@@ -241,7 +241,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <p className="text-xs text-text-muted">
-                  Joined {new Date(user.created_at).toLocaleDateString()}
+                  Joined {new Date(user.created_at ?? '').toLocaleDateString()}
                 </p>
               </GlassCard>
             )}

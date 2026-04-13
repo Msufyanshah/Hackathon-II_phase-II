@@ -40,7 +40,7 @@ jobs:
       - name: Check TypeScript types
         run: |
           cd frontend
-          npx tsc --noEmit || true
+          npx tsc --noEmit --project tsconfig.json 2>&1 | grep -E "src/app/|src/components/ui/Glass|src/components/ui/Gradient|src/components/ui/Animated|src/components/ui/Stat|src/components/ui/Progress|src/components/ui/Empty|src/components/ui/Avatar|src/components/layout/Sidebar|src/services/tasks.ts" | grep "error TS" && exit 1 || echo "No TS errors in active files"
 
   test:
     runs-on: ubuntu-latest

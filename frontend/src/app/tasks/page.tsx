@@ -92,7 +92,7 @@ export default function TasksPage() {
       const updated: Task = {
         ...editingTask,
         title: editTitle.trim(),
-        description: editDesc.trim() || null,
+        description: editDesc.trim() || undefined,
       }
       setTasks((prev) => prev.map((t) => (t.id === editingTask.id ? updated : t)))
       setEditingTask(null)
