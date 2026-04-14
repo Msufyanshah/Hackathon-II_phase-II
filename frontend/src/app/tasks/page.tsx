@@ -153,7 +153,7 @@ export default function TasksPage() {
                       </div>
                     </div>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100">
-                      <button onClick={() => toast.info('Edit coming soon')} className="p-1.5 rounded text-text-muted hover:text-accent-cyan transition-colors">
+                      <button onClick={() => toast('Edit coming soon')} className="p-1.5 rounded text-text-muted hover:text-accent-cyan transition-colors">
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button onClick={() => deleteTask(task.id)} className="p-1.5 rounded text-text-muted hover:text-accent-rose transition-colors">

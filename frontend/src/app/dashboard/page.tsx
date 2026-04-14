@@ -16,16 +16,7 @@ import Avatar from '@/components/ui/Avatar'
 import AnimatedCheckbox from '@/components/ui/AnimatedCheckbox'
 import { useAuth } from '@/contexts/BetterAuthContext'
 import { TaskService } from '@/services/tasks'
-
-interface Task {
-  id: string
-  title: string
-  description: string | null
-  completed: boolean
-  user_id: string
-  created_at: string
-  updated_at: string
-}
+import { Task } from '@/lib/types'
 
 export default function DashboardPage() {
   const { user, token, logout } = useAuth()
