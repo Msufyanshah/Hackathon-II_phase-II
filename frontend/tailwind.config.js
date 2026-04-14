@@ -12,12 +12,12 @@ module.exports = {
           primary: 'var(--bg-primary)',
           secondary: 'var(--bg-secondary)',
           tertiary: 'var(--bg-tertiary)',
-          glass: 'var(--bg-glass)',
-          'glass-hover': 'var(--bg-glass-hover)',
         },
-        border: {
-          glass: 'var(--border-glass)',
-          'glass-hover': 'var(--border-glass-hover)',
+        glass: {
+          bg: 'var(--glass-bg)',
+          hover: 'var(--glass-bg-hover)',
+          border: 'var(--glass-border)',
+          'border-hover': 'var(--glass-border-hover)',
         },
         accent: {
           purple: 'var(--accent-purple)',
@@ -26,6 +26,7 @@ module.exports = {
           emerald: 'var(--accent-emerald)',
           amber: 'var(--accent-amber)',
           rose: 'var(--accent-rose)',
+          violet: 'var(--accent-violet)',
         },
         text: {
           primary: 'var(--text-primary)',
@@ -33,58 +34,27 @@ module.exports = {
           muted: 'var(--text-muted)',
         },
       },
-      borderRadius: {
-        'glass-sm': 'var(--radius-sm)',
-        'glass-md': 'var(--radius-md)',
-        'glass-lg': 'var(--radius-lg)',
-      },
-      boxShadow: {
-        card: 'var(--shadow-card)',
-        glow: 'var(--shadow-glow)',
-        'glow-cyan': 'var(--shadow-glow-cyan)',
-      },
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       animation: {
-        shimmer: 'shimmer 1.5s infinite',
-        shake: 'shake 0.3s ease',
-        float: 'float 3s ease-in-out infinite',
-        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-        'fade-in': 'fade-in 0.3s ease',
-        'slide-in-right': 'slide-in-right 0.3s ease',
-        'count-up': 'count-up 0.5s ease-out',
+        'fade-in': 'fadeIn 0.3s ease forwards',
+        'slide-in': 'slideIn 0.3s ease forwards',
+        'pulse-glow': 'pulse-glow 2s infinite',
       },
       keyframes: {
-        shimmer: {
-          '0%': { backgroundPosition: '-200% 0' },
-          '100%': { backgroundPosition: '200% 0' },
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        shake: {
-          '0%, 100%': { transform: 'translateX(0)' },
-          '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-4px)' },
-          '20%, 40%, 60%, 80%': { transform: 'translateX(4px)' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' },
+        slideIn: {
+          '0%': { opacity: '0', transform: 'translateX(-10px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
         },
         'pulse-glow': {
           '0%, 100%': { boxShadow: '0 0 0 0 rgba(124, 58, 237, 0.2)' },
           '50%': { boxShadow: '0 0 20px 5px rgba(124, 58, 237, 0.1)' },
-        },
-        'fade-in': {
-          from: { opacity: 0, transform: 'translateY(10px)' },
-          to: { opacity: 1, transform: 'translateY(0)' },
-        },
-        'slide-in-right': {
-          from: { transform: 'translateX(100%)', opacity: 0 },
-          to: { transform: 'translateX(0)', opacity: 1 },
-        },
-        'count-up': {
-          from: { opacity: 0, transform: 'translateY(5px)' },
-          to: { opacity: 1, transform: 'translateY(0)' },
         },
       },
     },

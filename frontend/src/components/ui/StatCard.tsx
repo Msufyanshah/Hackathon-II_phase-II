@@ -1,41 +1,51 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { LucideIcon } from 'lucide-react'
 
 interface StatCardProps {
   label: string
-  value: number | string
-  icon: React.ReactNode
-  accentColor?: string
+  value: string | number
+  icon: LucideIcon
+  accentColor: string
+  trend?: { value: string; positive: boolean }
 }
 
-export default function StatCard({
-  label,
-  value,
-  icon,
-  accentColor = 'var(--accent-purple)',
-}: StatCardProps) {
+export default function StatCard({ label, value, icon: Icon, accentColor, trend }: StatCardProps) {
   return (
-    <div className="stat-card">
-      <div className="flex items-center gap-3">
-        <div
-          className="w-10 h-10 rounded-lg flex items-center justify-center"
-          style={{ background: `${accentColor}20`, color: accentColor }}
-        >
-          {icon}
-        </div>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="glass-card p-5 relative overflow-hidden"
+      style={{ borderTop: `3px solid ${accentColor}` }}
+    >
+      <div className="flex items-start justify-between">
         <div>
+          <p className="text-sm text-text-secondary mb-1">{label}</p>
           <motion.p
-            className="stat-value"
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            className="text-3xl font-bold text-text-primary"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.1 }}
           >
             {value}
           </motion.p>
-          <p className="stat-label">{label}</p>
+        </div>
+        <div
+          className="p-2.5 rounded-xl"
+          style={{ background: `${accentColor}15` }}
+        >
+          <Icon className="w-5 h-5" style={{ color: accentColor }} />
         </div>
       </div>
-    </div>
+      {trend && (
+        <div className="mt-3 flex items-center gap-1.5">
+          <span className={trend.positive ? 'text-accent-emerald' : 'text-accent-rose'}>
+            {trend.positive ? '↗' : '↘'} {trend.value}
+          </span>
+          <span className="text-xs text-text-muted">{trend.positive ? 'this week' : 'this week'}</span>
+        </div>
+      )}
+    </motion.div>
   )
 }

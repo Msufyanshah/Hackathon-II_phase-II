@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, Github, Check } from 'lucide-react'
 import toast from 'react-hot-toast'
 import GlassInput from '@/components/ui/GlassInput'
 import GradientButton from '@/components/ui/GradientButton'
@@ -21,7 +21,6 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-
     try {
       await login(email, password)
       toast.success('Welcome back!')
@@ -34,90 +33,97 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg-primary relative overflow-hidden">
-      {/* Ambient orbs */}
-      <motion.div
-        className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full opacity-20 blur-3xl"
-        style={{ background: 'var(--accent-purple)' }}
-        animate={{ scale: [1, 1.2, 1], x: [0, 30, 0] }}
-        transition={{ duration: 8, repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full opacity-15 blur-3xl"
-        style={{ background: 'var(--accent-cyan)' }}
-        animate={{ scale: [1, 1.3, 1], x: [0, -20, 0] }}
-        transition={{ duration: 6, repeat: Infinity }}
-      />
+    <div className="min-h-screen flex bg-bg-primary overflow-hidden">
+      {/* Left Panel - Brand */}
+      <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center p-12">
+        {/* Grid Background */}
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
+            backgroundSize: '40px 40px',
+          }}
+        />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-accent-purple/20 to-accent-cyan/10" />
+        
+        <div className="relative z-10 max-w-md">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-lg border-2 border-accent-violet flex items-center justify-center">
+              <Check className="w-5 h-5 text-accent-violet" />
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-accent-violet to-accent-cyan bg-clip-text text-transparent">TaskFlow</span>
+          </div>
 
-      {/* Auth Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="glass-card w-full max-w-md mx-4 p-8 relative z-10"
-      >
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-accent-purple to-accent-cyan bg-clip-text text-transparent mb-2">
-            ✓ aitodo
+          <h1 className="text-4xl font-bold text-text-primary mb-4 leading-tight">
+            Organize your work,<br />
+            <span className="bg-gradient-to-r from-accent-violet to-accent-cyan bg-clip-text text-transparent">amplify your life.</span>
           </h1>
-          <p className="text-text-secondary">Welcome back — sign in to continue</p>
+          <p className="text-text-secondary mb-8">
+            A premium task management experience built for focus, speed, and clarity.
+          </p>
+
+          <div className="flex flex-wrap gap-3">
+            {['JWT Secured', 'Real-time Sync', 'Smart Filters'].map((tag) => (
+              <span key={tag} className="glass px-4 py-2 rounded-full text-xs text-text-secondary">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent-purple inline-block mr-2" />
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <GlassInput
-            label="Email"
-            type="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            icon={<Mail className="w-4 h-4" />}
-            required
-          />
-
-          <div className="relative">
-            <GlassInput
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              icon={<Lock className="w-4 h-4" />}
-              required
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-9 text-text-muted hover:text-text-secondary transition-colors"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </button>
+      {/* Right Panel - Form */}
+      <div className="flex-1 flex items-center justify-center p-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-md">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-text-primary mb-2">Welcome back</h2>
+            <p className="text-text-secondary">Sign in to your account to continue</p>
           </div>
 
-          <div className="flex justify-end">
-            <Link
-              href="/forgot-password"
-              className="text-sm text-accent-cyan hover:text-accent-cyan/80 transition-colors"
-            >
-              Forgot password?
-            </Link>
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <GlassInput label="Email address" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} icon={<Mail className="w-4 h-4" />} required />
+            
+            <div className="relative">
+              <GlassInput label="Password" type={showPassword ? 'text' : 'password'} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} icon={<Lock className="w-4 h-4" />} required />
+              <button type="button" className="absolute right-3 top-9 text-text-muted hover:text-text-secondary" onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
 
-          <GradientButton fullWidth disabled={isLoading} type="submit">
-            {isLoading ? 'Signing in...' : 'Sign In'}
-          </GradientButton>
-        </form>
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2 text-sm text-text-secondary cursor-pointer">
+                <input type="checkbox" className="custom-checkbox" />
+                Remember me
+              </label>
+              <Link href="/forgot-password" className="text-sm text-accent-violet hover:underline">Forgot password?</Link>
+            </div>
 
-        <p className="mt-6 text-center text-sm text-text-secondary">
-          Don't have an account?{' '}
-          <Link
-            href="/register"
-            className="text-accent-purple hover:text-accent-purple-hover font-medium transition-colors"
-          >
-            Create one →
-          </Link>
-        </p>
-      </motion.div>
+            <GradientButton fullWidth disabled={isLoading} type="submit" className="flex items-center justify-center gap-2">
+              Sign In →
+            </GradientButton>
+
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-glass-border" /></div>
+              <div className="relative flex justify-center text-xs"><span className="bg-bg-primary px-3 text-text-muted">OR CONTINUE WITH</span></div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button type="button" className="btn-secondary flex items-center justify-center gap-2">
+                <span className="text-sm">G</span> Google
+              </button>
+              <button type="button" className="btn-secondary flex items-center justify-center gap-2">
+                <Github className="w-4 h-4" /> GitHub
+              </button>
+            </div>
+          </form>
+
+          <p className="mt-8 text-center text-sm text-text-secondary">
+            Don't have an account? <Link href="/register" className="text-accent-violet hover:underline font-medium">Create one</Link>
+          </p>
+        </motion.div>
+      </div>
     </div>
   )
 }

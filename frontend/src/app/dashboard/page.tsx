@@ -2,26 +2,37 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { CheckCircle, Circle, ListTodo, Plus } from 'lucide-react'
+import { FileText, Clock, CheckCircle2, Zap, Plus } from 'lucide-react'
 import toast from 'react-hot-toast'
-import GlassCard from '@/components/ui/GlassCard'
+import Sidebar from '@/components/layout/Sidebar'
+import TopBar from '@/components/layout/TopBar'
 import StatCard from '@/components/ui/StatCard'
 import ProgressRing from '@/components/ui/ProgressRing'
-import AnimatedCheckbox from '@/components/ui/AnimatedCheckbox'
-import Avatar from '@/components/ui/Avatar'
+import GlassCard from '@/components/ui/GlassCard'
 import GlassInput from '@/components/ui/GlassInput'
 import GradientButton from '@/components/ui/GradientButton'
+import CreateTaskModal from '@/components/ui/CreateTaskModal'
+import Avatar from '@/components/ui/Avatar'
+import AnimatedCheckbox from '@/components/ui/AnimatedCheckbox'
 import { useAuth } from '@/contexts/BetterAuthContext'
 import { TaskService } from '@/services/tasks'
-import { Task } from '@/lib/types'
+
+interface Task {
+  id: string
+  title: string
+  description: string | null
+  completed: boolean
+  user_id: string
+  created_at: string
+  updated_at: string
+}
 
 export default function DashboardPage() {
-  const { user, token } = useAuth()
+  const { user, token, logout } = useAuth()
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
   const [newTitle, setNewTitle] = useState('')
-  const [newDesc, setNewDesc] = useState('')
-  const [showDesc, setShowDesc] = useState(false)
   const [creating, setCreating] = useState(false)
 
   useEffect(() => {
@@ -33,25 +44,19 @@ export default function DashboardPage() {
     try {
       const data = await TaskService.getUserTasks(user.id)
       setTasks(data)
-    } catch (error: any) {
+    } catch {
       toast.error('Failed to load tasks')
     } finally {
       setLoading(false)
     }
   }
 
-  const createTask = async () => {
-    if (!newTitle.trim() || !user) return
+  const createTask = async (title: string, description: string) => {
+    if (!user) return
     setCreating(true)
     try {
-      const task = await TaskService.createTask(user.id, {
-        title: newTitle.trim(),
-        description: newDesc.trim() || undefined,
-      })
-      setTasks((prev) => [task, ...prev])
-      setNewTitle('')
-      setNewDesc('')
-      setShowDesc(false)
+      await TaskService.createTask(user.id, { title, description: description || undefined })
+      await loadTasks()
       toast.success('Task created!')
     } catch {
       toast.error('Failed to create task')
@@ -64,11 +69,7 @@ export default function DashboardPage() {
     if (!user) return
     try {
       await TaskService.toggleTaskCompletion(user.id, task.id, !task.completed)
-      setTasks((prev) =>
-        prev.map((t) =>
-          t.id === task.id ? { ...t, completed: !t.completed } : t
-        )
-      )
+      setTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, completed: !t.completed } : t)))
     } catch {
       toast.error('Failed to update task')
     }
@@ -86,8 +87,8 @@ export default function DashboardPage() {
   }
 
   const totalTasks = tasks.length
+  const activeTasks = tasks.filter((t) => !t.completed).length
   const completedTasks = tasks.filter((t) => t.completed).length
-  const activeTasks = totalTasks - completedTasks
   const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
 
   const recentTasks = [...tasks]
@@ -96,158 +97,133 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-bg-primary">
-      <div className="max-w-6xl mx-auto p-6 space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-text-primary">
-              Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'}
-              {user ? `, ${user.username}` : ''} 👋
-            </h1>
-            <p className="text-text-secondary text-sm mt-1">Here's your task overview</p>
+      {/* Sidebar */}
+      <Sidebar user={user ? { name: user.username || user.email, email: user.email } : null} onSignOut={logout} />
+
+      {/* Main Content */}
+      <div className="ml-[260px] min-h-screen">
+        {/* Top Bar */}
+        <TopBar
+          title="Dashboard"
+          subtitle={`Welcome back, ${user?.username || 'User'}! Here's your overview.`}
+          searchPlaceholder="Search tasks..."
+        />
+
+        <main className="p-6 space-y-6">
+          {/* Stats Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard label="Total Tasks" value={totalTasks} icon={FileText} accentColor="#7c3aed" trend={{ value: `+${completedTasks} this week`, positive: true }} />
+            <StatCard label="Active" value={activeTasks} icon={Clock} accentColor="#06b6d4" />
+            <StatCard label="Completed" value={completedTasks} icon={CheckCircle2} accentColor="#10b981" trend={{ value: `+${completedTasks} today`, positive: true }} />
+            <StatCard label="Day Streak" value={completedTasks > 0 ? completedTasks : 0} icon={Zap} accentColor="#f59e0b" />
           </div>
-          {user && <Avatar name={user.username || user.email} size={40} />}
-        </div>
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <StatCard
-            label="Total Tasks"
-            value={totalTasks}
-            icon={<ListTodo className="w-5 h-5" />}
-            accentColor="var(--accent-purple)"
-          />
-          <StatCard
-            label="Active"
-            value={activeTasks}
-            icon={<Circle className="w-5 h-5" />}
-            accentColor="var(--accent-amber)"
-          />
-          <StatCard
-            label="Completed"
-            value={completedTasks}
-            icon={<CheckCircle className="w-5 h-5" />}
-            accentColor="var(--accent-emerald)"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Quick Task Creation */}
-            <GlassCard>
-              <GlassInput
-                placeholder="What needs to be done?"
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && createTask()}
-                icon={<Plus className="w-4 h-4" />}
-              />
-              {showDesc && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column: Quick Add + Recent Tasks */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Quick Add */}
+              <GlassCard className="p-5">
+                <div className="flex items-center gap-2 mb-4 text-text-secondary">
+                  <Plus className="w-4 h-4" />
+                  <span className="text-sm font-medium">Quick Add Task</span>
+                </div>
+                <div className="space-y-3">
                   <GlassInput
-                    className="mt-3"
-                    placeholder="Description (optional)"
-                    value={newDesc}
-                    onChange={(e) => setNewDesc(e.target.value)}
+                    placeholder="What needs to be done?"
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && newTitle.trim() && (createTask(newTitle, ''), setNewTitle(''))}
                   />
-                </motion.div>
-              )}
-              <div className="flex gap-2 mt-3">
-                <GradientButton onClick={createTask} disabled={creating || !newTitle.trim()}>
-                  {creating ? 'Adding...' : 'Add Task'}
-                </GradientButton>
-                <button className="btn-secondary text-sm" onClick={() => setShowDesc(!showDesc)}>
-                  {showDesc ? 'Hide' : '+ Description'}
-                </button>
-              </div>
-            </GlassCard>
-
-            {/* Recent Tasks */}
-            <GlassCard>
-              <h2 className="text-lg font-semibold text-text-primary mb-4">Recent Tasks</h2>
-              {loading ? (
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-16 skeleton rounded-md" />
-                  ))}
-                </div>
-              ) : recentTasks.length === 0 ? (
-                <p className="text-text-secondary text-center py-8">
-                  No tasks yet — create your first one above!
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  {recentTasks.map((task) => (
-                    <motion.div
-                      key={task.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-bg-glass transition-colors group"
-                    >
-                      <AnimatedCheckbox
-                        checked={task.completed}
-                        onChange={() => toggleTask(task)}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p
-                          className={`text-sm font-medium truncate ${
-                            task.completed
-                              ? 'line-through text-text-muted'
-                              : 'text-text-primary'
-                          }`}
-                        >
-                          {task.title}
-                        </p>
-                        {task.description && (
-                          <p className="text-xs text-text-muted truncate">
-                            {task.description}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="text-xs text-text-muted">
-                          {new Date(task.created_at).toLocaleDateString()}
-                        </span>
-                        <button
-                          onClick={() => deleteTask(task.id)}
-                          className="text-text-muted hover:text-accent-rose transition-colors text-xs"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </GlassCard>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Progress Ring */}
-            <GlassCard className="flex flex-col items-center justify-center py-8">
-              <ProgressRing progress={completionRate} size={120} strokeWidth={8} label={`${completionRate}% complete`} />
-            </GlassCard>
-
-            {/* User Info */}
-            {user && (
-              <GlassCard>
-                <div className="flex items-center gap-3 mb-4">
-                  <Avatar name={user.username || user.email} size={44} />
-                  <div>
-                    <p className="font-medium text-text-primary">{user.username || 'User'}</p>
-                    <p className="text-xs text-text-muted">{user.email}</p>
+                  <div className="flex gap-3">
+                    <GradientButton onClick={() => { if (newTitle.trim()) { createTask(newTitle, ''); setNewTitle(''); } }} disabled={creating || !newTitle.trim()}>
+                      {creating ? 'Adding...' : 'Add Task'}
+                    </GradientButton>
+                    <button className="btn-secondary text-sm" onClick={() => setShowModal(true)}>
+                      + Description
+                    </button>
                   </div>
                 </div>
-                <p className="text-xs text-text-muted">
-                  Joined {new Date(user.created_at ?? '').toLocaleDateString()}
-                </p>
               </GlassCard>
-            )}
+
+              {/* Recent Tasks */}
+              <GlassCard className="p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-sm font-medium text-text-secondary flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-accent-violet" />
+                    Recent Tasks
+                  </h2>
+                  <a href="/tasks" className="text-xs text-accent-violet hover:underline">View All →</a>
+                </div>
+                {loading ? (
+                  <div className="space-y-3">
+                    {[1, 2, 3].map((i) => <div key={i} className="h-12 rounded-xl bg-bg-tertiary/50" />)}
+                  </div>
+                ) : recentTasks.length === 0 ? (
+                  <p className="text-center py-8 text-text-muted text-sm">No tasks yet — create your first one!</p>
+                ) : (
+                  <div className="space-y-2">
+                    {recentTasks.map((task) => (
+                      <motion.div
+                        key={task.id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-glass-bg transition-colors group"
+                      >
+                        <AnimatedCheckbox checked={task.completed} onChange={() => toggleTask(task)} />
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm font-medium truncate ${task.completed ? 'line-through text-text-muted' : 'text-text-primary'}`}>
+                            {task.title}
+                          </p>
+                          {task.description && <p className="text-xs text-text-muted truncate mt-0.5">{task.description}</p>}
+                        </div>
+                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <span className="text-xs text-text-muted">{new Date(task.created_at).toLocaleDateString()}</span>
+                          <button onClick={() => deleteTask(task.id)} className="text-text-muted hover:text-accent-rose text-xs">✕</button>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </GlassCard>
+            </div>
+
+            {/* Right Column: Progress + User Info */}
+            <div className="space-y-6">
+              <GlassCard className="p-5 flex flex-col items-center justify-center">
+                <div className="flex items-center gap-2 mb-4 text-text-secondary">
+                  <Zap className="w-4 h-4 text-accent-violet" />
+                  <span className="text-sm font-medium">Progress</span>
+                </div>
+                <ProgressRing progress={completionRate} size={130} strokeWidth={7} color="#06b6d4" />
+                <div className="flex gap-4 mt-4 text-xs">
+                  <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-accent-purple" /> Completed ({completedTasks})</div>
+                  <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-bg-tertiary" /> Remaining ({activeTasks})</div>
+                </div>
+              </GlassCard>
+
+              {user && (
+                <GlassCard className="p-5">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Avatar name={user.username || user.email} size={44} />
+                    <div>
+                      <p className="font-medium text-text-primary">{user.username}</p>
+                      <p className="text-xs text-text-muted">{user.email}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2 text-xs text-text-muted">
+                    <div className="flex justify-between"><span>User ID</span><span className="font-mono text-text-secondary truncate ml-2">{user.id}</span></div>
+                    <div className="flex justify-between"><span>Joined</span><span>{new Date(user.created_at ?? '').toLocaleDateString()}</span></div>
+                    <div className="flex justify-between"><span>Status</span><span className="text-accent-emerald">Active</span></div>
+                  </div>
+                </GlassCard>
+              )}
+            </div>
           </div>
-        </div>
+        </main>
       </div>
+
+      {/* Create Task Modal */}
+      <CreateTaskModal isOpen={showModal} onClose={() => setShowModal(false)} onSubmit={createTask} />
     </div>
   )
 }

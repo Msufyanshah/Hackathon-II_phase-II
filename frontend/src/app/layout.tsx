@@ -7,8 +7,8 @@ import '@/styles/globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'aitodo — TaskFlow',
-  description: 'Modern task management with premium dark-mode experience',
+  title: 'TaskFlow — Premium Task Management',
+  description: 'Organize your work, amplify your life.',
 }
 
 export default function RootLayout({
@@ -26,19 +26,11 @@ export default function RootLayout({
             style: {
               background: 'var(--bg-secondary)',
               color: 'var(--text-primary)',
-              border: '1px solid var(--border-glass)',
+              border: '1px solid var(--glass-border)',
               borderRadius: 'var(--radius-md)',
             },
-            success: {
-              style: {
-                borderColor: 'var(--accent-emerald)',
-              },
-            },
-            error: {
-              style: {
-                borderColor: 'var(--accent-rose)',
-              },
-            },
+            success: { style: { borderColor: 'var(--accent-emerald)' } },
+            error: { style: { borderColor: 'var(--accent-rose)' } },
           }}
         />
       </body>
