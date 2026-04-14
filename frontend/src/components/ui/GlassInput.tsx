@@ -13,13 +13,13 @@ const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-text-secondary mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-1.5">
             {label}
           </label>
         )}
         <div className="relative">
           {icon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none">
               {icon}
             </div>
           )}

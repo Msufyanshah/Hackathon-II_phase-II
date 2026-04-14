@@ -1,29 +1,28 @@
-'use client';
+'use client'
 
-import { useAuth } from '../../contexts/BetterAuthContext';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import LoadingSpinner from '../ui/LoadingSpinner';
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/BetterAuthContext'
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading } = useAuth();
-  const router = useRouter();
+export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isLoading } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.push('/login');
+      router.push('/login')
     }
-  }, [isLoading, isAuthenticated, router]);
+  }, [isLoading, isAuthenticated, router])
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner />
+      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
+        <div className="text-text-secondary">Loading...</div>
       </div>
-    );
+    )
   }
 
-  return isAuthenticated ? <>{children}</> : null;
-};
+  if (!isAuthenticated) return null
 
-export default ProtectedRoute;
+  return <>{children}</>
+}

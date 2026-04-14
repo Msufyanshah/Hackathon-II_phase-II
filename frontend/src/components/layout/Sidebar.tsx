@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, ListTodo, User, Settings, LogOut, ChevronLeft } from 'lucide-react'
+import { LayoutDashboard, ListTodo, User, Settings, LogOut, ChevronLeft, Bell, Search, Moon, Sun, Shield } from 'lucide-react'
 import Avatar from '@/components/ui/Avatar'
 
 interface SidebarProps {
@@ -21,7 +22,16 @@ const navItems = [
 
 export default function Sidebar({ user, onSignOut }: SidebarProps) {
   const pathname = usePathname()
+  const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
+
+  const handleSignOut = () => {
+    if (onSignOut) onSignOut()
+    localStorage.removeItem('jwt_token')
+    localStorage.removeItem('refresh_token')
+    localStorage.removeItem('user_data')
+    router.push('/login')
+  }
 
   return (
     <motion.aside
@@ -44,10 +54,7 @@ export default function Sidebar({ user, onSignOut }: SidebarProps) {
             </motion.span>
           )}
         </AnimatePresence>
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="p-1.5 rounded-lg hover:bg-glass-bg text-text-secondary transition-colors"
-        >
+        <button onClick={() => setCollapsed(!collapsed)} className="p-1.5 rounded-lg hover:bg-glass-bg text-text-secondary transition-colors">
           <ChevronLeft className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-180' : ''}`} />
         </button>
       </div>
@@ -60,23 +67,14 @@ export default function Sidebar({ user, onSignOut }: SidebarProps) {
           return (
             <Link key={item.href} href={item.href}>
               <motion.div
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all ${
-                  isActive
-                    ? 'bg-accent-purple/15 text-accent-violet'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-glass-bg'
-                }`}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all ${isActive ? 'bg-accent-purple/15 text-accent-violet' : 'text-text-secondary hover:text-text-primary hover:bg-glass-bg'}`}
                 whileHover={{ x: 4 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-accent-violet' : ''}`} />
                 <AnimatePresence mode="wait">
                   {!collapsed && (
-                    <motion.span
-                      initial={{ opacity: 0, width: 0 }}
-                      animate={{ opacity: 1, width: 'auto' }}
-                      exit={{ opacity: 0, width: 0 }}
-                      className="text-sm font-medium whitespace-nowrap overflow-hidden"
-                    >
+                    <motion.span initial={{ opacity: 0, width: 0 }} animate={{ opacity: 1, width: 'auto' }} exit={{ opacity: 0, width: 0 }} className="text-sm font-medium whitespace-nowrap overflow-hidden">
                       {item.label}
                     </motion.span>
                   )}
@@ -93,12 +91,7 @@ export default function Sidebar({ user, onSignOut }: SidebarProps) {
           <Avatar name={user?.name || user?.email || '?'} size={36} />
           <AnimatePresence mode="wait">
             {!collapsed && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="min-w-0"
-              >
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-w-0">
                 <p className="text-sm font-medium text-text-primary truncate">{user?.name || user?.email}</p>
                 <p className="text-xs text-text-muted truncate">{user?.email}</p>
               </motion.div>
@@ -106,10 +99,7 @@ export default function Sidebar({ user, onSignOut }: SidebarProps) {
           </AnimatePresence>
         </div>
         {!collapsed && (
-          <button
-            onClick={onSignOut}
-            className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-xl text-text-secondary hover:text-accent-rose hover:bg-accent-rose/10 transition-colors text-sm"
-          >
+          <button onClick={handleSignOut} className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-xl text-text-secondary hover:text-accent-rose hover:bg-accent-rose/10 transition-colors text-sm">
             <LogOut className="w-4 h-4" />
             Sign Out
           </button>
