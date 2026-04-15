@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
     setIsLoading(true)
     try {
       const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000'
-      const res = await fetch(`${API_BASE}/auth/password-reset/request`, {
+      const res = await fetch(`${API_BASE}/api/auth/password-reset/request`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }),
       })
       if (res.ok) { setSent(true); toast.success('Reset link sent! Check your email.') }
