@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { FileText, Clock, CheckCircle2, Zap, Plus } from 'lucide-react'
@@ -32,18 +32,18 @@ export default function DashboardPage() {
     if (!isLoading && !isAuthenticated) router.push('/login')
   }, [isLoading, isAuthenticated, router])
 
-  useEffect(() => {
-    if (token && user) loadTasks()
-  }, [token, user])
-
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     if (!user) return
     try {
       const data = await TaskService.getUserTasks(user.id)
       setTasks(data)
     } catch { toast.error('Failed to load tasks') }
     finally { setLoading(false) }
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (token && user) loadTasks()
+  }, [token, user, loadTasks])
 
   const createTask = async (title: string, description: string) => {
     if (!user) return

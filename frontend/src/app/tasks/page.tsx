@@ -1,14 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Search, Plus, Edit2, Trash2, Clock } from 'lucide-react'
+import { Plus, Edit2, Trash2, Clock } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Sidebar from '@/components/layout/Sidebar'
 import TopBar from '@/components/layout/TopBar'
 import GlassCard from '@/components/ui/GlassCard'
-import GlassInput from '@/components/ui/GlassInput'
+
 import GradientButton from '@/components/ui/GradientButton'
 import CreateTaskModal from '@/components/ui/CreateTaskModal'
 import AnimatedCheckbox from '@/components/ui/AnimatedCheckbox'
@@ -28,22 +28,23 @@ export default function TasksPage() {
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
 
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) router.push('/login')
-  }, [isLoading, isAuthenticated, router])
-
-  useEffect(() => { if (token && user) loadTasks() }, [token, user])
-
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     if (!user) return
+    setLoading(true)
     try {
       const data = await TaskService.getUserTasks(user.id, { search: search || undefined, completed: filter === 'all' ? undefined : filter === 'completed' })
       setTasks(data)
     } catch { toast.error('Failed to load tasks') }
     finally { setLoading(false) }
-  }
+  }, [user, search, filter])
 
-  useEffect(() => { loadTasks() }, [search, filter])
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push('/login');
+    } else if (user && token) {
+      loadTasks();
+    }
+  }, [isLoading, isAuthenticated, router, user, token, loadTasks]);
 
   const toggleTask = async (task: Task) => {
     if (!user) return
